@@ -17,7 +17,6 @@ using namespace std;
 #define sz(a) ((int)((a).size()))
 #define char unsigned char
 
-typedef long long ll;
 typedef long double ld;
 
 void solve() 
