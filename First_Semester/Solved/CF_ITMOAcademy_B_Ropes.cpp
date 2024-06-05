@@ -26,45 +26,39 @@ void solve()
     int pedacos;
     cin >> cordas >> pedacos;
 
-    double menor = INF;
-    double maxdiff = 1e-7;
     vector<double> tam(cordas);
     for (int i = 0; i < cordas; i++)
     {
         cin >> tam[i];
-        if (tam[i] < menor)
-            menor = tam[i];
     }
 
-    double diff = 1;
-    double ultimo = 0;
-    double hi = menor, lo = 1;
-    while (diff - maxdiff > 0)
+    double mid;
+    double hi = 1e7, lo = 0;
+    for (int i = 0; i < 8000; i++)
     {
-        diff = (lo + hi) / 2;
+        mid = (lo + hi) / 2;
+
         int feitos = 0;
         for (int i = 0; i < cordas; i++)
         {
-            int res = tam[i] / diff;
+            int res = tam[i] / mid;
             feitos += (int)res;
         }
 
         if (feitos >= pedacos)
-            lo = diff;
-        else
-            hi = diff;
+            lo = mid;
 
-        if (ultimo == diff)
-            break;
-        ultimo = diff;
+        else
+            hi = mid;
     }
-    cout << diff << endl;
+
+    cout << mid << endl;
 }
 
 int32_t main()
 {
     // casas decimais
-    // cout << fixed << setprecision(1);
+    cout << fixed << setprecision(6);
 
     // horario
     // cout << setfill('0') << setw(2);
