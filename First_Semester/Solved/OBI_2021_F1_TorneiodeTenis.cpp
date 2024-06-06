@@ -1,5 +1,4 @@
 #include <bits/stdc++.h>
-#include <string>
 using namespace std;
 
 #define fast_io cin.tie(0)->sync_with_stdio(0);
@@ -11,43 +10,56 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
+#define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
+#define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
 typedef long long ll;
 typedef pair<int, int> ii;
+typedef vector<int> vi;
 
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
-// O nosso objetivo é contar quantos bits são diferentes entre dois números
-// Para isso, podemos utilizar o operador XOR e depois converter
-// a resposta para binário
-
-int transformar(int num)
-{
-    string ans;
-    int soma = 0;
-    cout << num;
-    // A saída estará ao contrário, mas a gente só precisa contar o número de "1"
-    while (num > 0)
-    {
-        ans += to_string(num % 2);
-        num = num / 2;
-    }
-
-    cout << ans;
-    return soma;
-}
-
 void solve()
 {
-    int a;
-    cin >> a;
+    int vit = 0;
+    for (int i = 0; i < 6; i++)
+    {
+        char res;
+        cin >> res;
+        if (res == 'V')
+            vit++;
+    }
 
-    cout << transformar(a);
+    if (vit < 1)
+    {
+        cout << "-1\n";
+        return;
+    }
+
+    if (vit < 3)
+    {
+        cout << "3\n";
+        return;
+    }
+
+    if (vit < 5)
+    {
+        cout << "2\n";
+        return;
+    }
+
+    cout << "1\n";
 }
 
 int32_t main()
 {
+    // casas decimais
+    // cout << fixed << setprecision(1);
+
+    // horario
+    // cout << setfill('0') << setw(2);
+
     fast_io;
     int t = 1;
     // cin >> t;
