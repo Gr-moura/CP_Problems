@@ -19,44 +19,31 @@ typedef vector<int> vi;
 
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
+
 void solve()
 {
+    int t;
+    cin >> t;
 
-    map<char, int> qt;
-    string n = "123";
+    int ans = t;
+    vi kangs(t);
+    for (int i = 0; i < t; i++)
+        cin >> kangs[i];
 
-    int len = 0;
-    string nums;
-    cin >> nums;
-    int l = 0, r = 1;
-    qt[nums[l]]++;
+    sort(all(kangs));
 
-    for (; r < nums.size() && !(qt['1'] != 0 && qt['2'] != 0 && qt['3'] != 0); r++)
+    for (int l = 0, r = t / 2; r < t && l < t / 2;)
     {
-        qt[nums[r]]++;
-    }
-
-    // r estará um após achar o perfeito
-    if (qt['1'] != 0 && qt['2'] != 0 && qt['3'] != 0)
-    {
-        len = r;
-    }
-
-    while (r < nums.size())
-    {
-        qt[nums[l]]--;
-        l++;
-
-        for (; r < nums.size() && !(qt['1'] != 0 && qt['2'] != 0 && qt['3'] != 0); r++)
+        if (kangs[r] >= 2 * kangs[l])
         {
-            qt[nums[r]]++;
+            ans--;
+            r++;
+            l++;
         }
-
-        if (qt['1'] != 0 && qt['2'] != 0 && qt['3'] != 0 && (r - l < len))
-            len = r - l;
+        else
+            r++;
     }
-
-    cout << len << endl;
+    cout << ans << endl;
 }
 
 int32_t main()
@@ -69,7 +56,7 @@ int32_t main()
 
     fast_io;
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
