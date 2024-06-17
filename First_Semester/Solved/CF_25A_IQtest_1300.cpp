@@ -10,12 +10,9 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
-#define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
 typedef long long ll;
-typedef pair<int, int> pii;
-typedef vector<int> vi;
+typedef pair<int, int> ii;
 
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
@@ -24,41 +21,36 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<int> v(3);
+    int par = 0;
+    vector<int> v(n);
     for (auto &i : v)
         cin >> i;
 
-    sort(v.begin(), v.end());
-
-    int temp, a = v[0], b = v[1], c = v[2];
-
-    int maior = -1;
-
-    for (int i = n / a; i >= 0; i--)
+    for (int i = 0; i < 3; i++)
     {
-        for (int j = 0; j <= n / b; j++)
+        if (v[i] % 2 == 0)
         {
-            int k = (n - a * i - b * j) / c;
-
-            if (k >= 0 && a * i + b * j + c * k == n)
-            {
-                if ((i + j + k) > maior)
-                    maior = i + j + k;
-            }
+            par++;
         }
     }
 
-    cout << maior;
+    if (par >= 2)
+        par = 1;
+    else
+        par = 0;
+
+    for (int i = 1; i <= n; i++)
+    {
+        if (v[i - 1] % 2 == par)
+        {
+            cout << i;
+            return;
+        }
+    }
 }
 
 int32_t main()
 {
-    // casas decimais
-    // cout << fixed << setprecision(1);
-
-    // horario
-    // cout << setfill('0') << setw(2);
-
     fast_io;
     int t = 1;
     // cin >> t;
