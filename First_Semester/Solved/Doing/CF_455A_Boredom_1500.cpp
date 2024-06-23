@@ -39,7 +39,7 @@ void solve()
     for (int i = 0; i < n; i++)
     {
         atual = v[i];
-        if (qt[atual] * atual <= qt[atual + 1] * (atual + 1) + qt[atual - 1] * (atual - 1))
+        if (qt[atual] * atual >= qt[atual - 1] * (atual - 1) + qt[atual + 1] * (atual + 1))
         {
             qt[atual + 1] = 0;
             qt[atual - 1] = 0;
