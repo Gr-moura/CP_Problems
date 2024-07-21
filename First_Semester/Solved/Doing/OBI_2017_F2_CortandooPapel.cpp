@@ -20,67 +20,46 @@ typedef vector<int> vi;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
-int eh_pal(vi &nums, int n)
-{
-    for (int i = 0; i < (n / 2 + 1); i++)
-    {
-        if (nums[i] != nums[n - 1 - i])
-            return 0;
-    }
-
-    return 1;
-}
-
 void solve()
 {
     int n;
     cin >> n;
 
     vi nums(n);
+    vi snums(n);
+
     for (int i = 0; i < n; i++)
         cin >> nums[i];
 
-    if (eh_pal(nums, n))
+    snums = nums;
+    sort(all(snums));
+
+    int acc = 700;
+
+    int ans = -1;
+
+    int l = n / 2 - acc > 0 ? n / 2 - acc : 0;
+    int r = n / 2 + acc < n - 1 ? n / 2 + acc : n - 1;
+
+    int atual;
+    for (int i = l; i <= r; i++)
     {
-        cout << 0;
-        return;
+        atual = snums[i];
+        int teste_atual = 0;
+        for (int j = 0; j < n - 1; j++)
+        {
+            if (nums[j] > atual && nums[j + 1] <= atual)
+                teste_atual++;
+        }
+        if (nums[n - 1] > atual && nums[n - 2] <= atual)
+            teste_atual++;
+
+        if (ans == -1 or teste_atual > ans)
+            ans = teste_atual;
     }
 
-    int ans = 0;
-    for (int i = 0; i < (n / 2 + 1);)
-    {
-        if (nums[i] == nums[n - 1 - i])
-        {
-            i++;
-            continue;
-        }
-
-        int somaL = nums[i], somaR = nums[n - 1 - i];
-        int l = i, r = n - 1 - i;
-
-        while (somaL != somaR)
-        {
-            if (somaL < somaR)
-            {
-                l++;
-                somaL += nums[l];
-                ans++;
-            }
-            else if (somaL > somaR)
-            {
-                r--;
-                somaR += nums[r];
-                ans++;
-            }
-        }
-
-        if (r >= l)
-            break;
-    }
-
-    cout << ans;
+    cout << ans + 1;
 }
-// 10 60 20 40 40 10
 
 int32_t main()
 {

@@ -20,67 +20,45 @@ typedef vector<int> vi;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
-int eh_pal(vi &nums, int n)
+int soma_dig(int num)
 {
-    for (int i = 0; i < (n / 2 + 1); i++)
+    int ans = 0;
+
+    while (num > 0)
     {
-        if (nums[i] != nums[n - 1 - i])
-            return 0;
+        ans += num % 10;
+        num /= 10;
     }
 
-    return 1;
+    return ans;
 }
 
 void solve()
 {
-    int n;
-    cin >> n;
+    int soma;
+    cin >> soma;
 
-    vi nums(n);
-    for (int i = 0; i < n; i++)
-        cin >> nums[i];
+    int l, r;
+    cin >> l >> r;
 
-    if (eh_pal(nums, n))
+    for (int i = l; i <= r; i++)
     {
-        cout << 0;
-        return;
-    }
-
-    int ans = 0;
-    for (int i = 0; i < (n / 2 + 1);)
-    {
-        if (nums[i] == nums[n - 1 - i])
+        if (soma_dig(i) == soma)
         {
-            i++;
-            continue;
-        }
-
-        int somaL = nums[i], somaR = nums[n - 1 - i];
-        int l = i, r = n - 1 - i;
-
-        while (somaL != somaR)
-        {
-            if (somaL < somaR)
-            {
-                l++;
-                somaL += nums[l];
-                ans++;
-            }
-            else if (somaL > somaR)
-            {
-                r--;
-                somaR += nums[r];
-                ans++;
-            }
-        }
-
-        if (r >= l)
+            cout << i << endl;
             break;
+        }
     }
 
-    cout << ans;
+    for (int i = r; i >= l; i--)
+    {
+        if (soma_dig(i) == soma)
+        {
+            cout << i << endl;
+            break;
+        }
+    }
 }
-// 10 60 20 40 40 10
 
 int32_t main()
 {

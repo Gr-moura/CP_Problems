@@ -22,14 +22,50 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
-    vi vec(4);
-    for (int i = 0; i < 4; i++)
-        cin >> vec[i];
+    int n;
+    cin >> n;
 
-    sort(all(vec));
+    vi nums(n);
+    for (int i = 0; i < n; i++)
+        cin >> nums[i];
 
-    cout << vec[0] + vec[3] - (vec[1] + vec[2]);
+    int ans = 0;
+
+    int somaL = nums[0], somaR = nums[n - 1];
+    int l = 0, r = n - 1;
+
+    while (l < r)
+    {
+        while (somaL != somaR)
+        {
+            if (somaL < somaR)
+            {
+                l++;
+                somaL += nums[l];
+                ans++;
+            }
+
+            else if (somaL > somaR)
+            {
+                r--;
+                somaR += nums[r];
+                ans++;
+            }
+
+            if (l == r)
+                break;
+        }
+
+        if (somaL == somaR)
+        {
+            l++, r--;
+            somaL = nums[l], somaR = nums[r];
+        }
+    }
+
+    cout << ans << endl;
 }
+// 10 60 20 40 40 10
 
 int32_t main()
 {
