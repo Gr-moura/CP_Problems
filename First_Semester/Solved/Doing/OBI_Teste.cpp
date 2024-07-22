@@ -25,37 +25,40 @@ void solve()
     int n;
     cin >> n;
 
-    vi nums(n);
-    vi snums(n);
+    vi hs(n + 2, 0);
 
-    for (int i = 0; i < n; i++)
-        cin >> nums[i];
+    for (int i = 1; i <= n; i++)
+        cin >> hs[i];
 
-    snums = nums;
-    sort(all(snums));
+    auto it = unique(all(hs));
 
-    int acc = 700;
+    int N = (int)distance(hs.begin(), it);
+    hs.resize(N);
 
-    int ans = -1;
+    vector<int> cs;
 
-    int l = n / 2 - acc > 0 ? n / 2 - acc : 0;
-    int r = n / 2 + acc < n - 1 ? n / 2 + acc : n - 1;
+    for (int i = 1; i < N - 1; i++)
+        if ((hs[i - 1] < hs[i] and hs[i] > hs[i + 1]) || (hs[i - 1] > hs[i] and hs[i] < hs[i + 1]))
+            cs.pb(hs[i]);
 
-    int atual;
-    for (int i = l; i <= r; i++)
+    if (cs.size() % 2)
+        cs.pb(0);
+
+    vector<pii> es;
+    int OPEN = 1, CLOSE = -1, ans = 1, open = 0;
+
+    for (size_t i = 0; i < cs.size(); i += 2)
     {
-        atual = snums[i];
-        int teste_atual = 0;
-        for (int j = 0; j < n - 1; j++)
-        {
-            if (nums[j] > atual && nums[j + 1] <= atual)
-                teste_atual++;
-        }
-        if (nums[n - 1] > atual && nums[n - 2] <= atual)
-            teste_atual++;
+        es.pb(pii(cs[i + 1], OPEN));
+        es.pb(pii(cs[i], CLOSE));
+    }
 
-        if (ans == -1 or teste_atual > ans)
-            ans = teste_atual;
+    sort(all(es));
+
+    for (auto e : es)
+    {
+        open += e.second;
+        ans = max(ans, open);
     }
 
     cout << ans + 1;
