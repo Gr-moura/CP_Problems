@@ -25,25 +25,12 @@ void solve()
     int n, x, ans = 0;
     cin >> n >> x;
 
-    int maxSoma = 2 * x - 3;
-    dbg(maxSoma);
-    int ma, mb, mc;
-
-    mb = maxSoma / 3;
-    ma = mb - 1;
-    mc = mb + 1;
-
-    if (ma * mb + mb * mc + mc * ma > n)
+    for (int a = 1; a <= x - 2 && 2 * a + 1 <= n; a++)
     {
-        int b = (int)sqrt((n + 1) / 3);
-        maxSoma = 3 * b;
-        dbg(maxSoma);
-    }
-
-    for (int i = 3; i < maxSoma; i++)
-    {
-        int sum = (i - 1) * (i - 2) / 2;
-        ans += sum;
+        for (int b = 1; b + a + 1 <= x && a * b + b + a <= n; b++)
+        {
+            ans += min(x - b - a, (n - a * b) / (a + b));
+        }
     }
 
     cout << ans << endl;
