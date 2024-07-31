@@ -1,3 +1,11 @@
-.DS_Store
-*~
-*.txt
+# Ignorar todos os arquivos
+*
+
+# Não ignorar diretórios
+!*/
+
+# Não ignorar arquivos .gitignore
+!.gitignore
+
+# Não ignorar arquivos .cpp
+!*.cpp
