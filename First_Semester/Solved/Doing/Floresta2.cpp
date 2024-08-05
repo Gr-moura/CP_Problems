@@ -5,6 +5,7 @@ using namespace std;
 #define dbg(x) cout << #x << " = " << x << endl
 #define all(x) x.begin(), x.end()
 #define sz(a) ((int)((a).size()))
+#define int long long
 #define endl '\n'
 #define f first
 #define s second
@@ -19,63 +20,88 @@ typedef vector<int> vi;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
-const int MAX = 110;
+const int MAX = 1010;
 
-vector<pii> mov = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+int lin, col;
 
 char M[MAX][MAX];
-bool vis[MAX][MAX];
 
-int linhas, colunas;
+vector<vi> dist(MAX, vi(MAX, -1));
+
+vector<pii> mv = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
 bool val(int i, int j)
 {
-    return i >= 0 && j >= 0 && i < linhas && j < colunas && !vis[i][j] && M[i][j] == 'H';
+    if (i >= 0 && i < lin && j >= 0 && j < col && M[i][j] != 'T' && dist[i][j] == -1)
+        return 1;
+
+    return 0;
 }
 
-void BFS(pii fonte)
+void BFS(pii s)
 {
-    vis[fonte.f][fonte.s] = 1;
-
     queue<pii> q;
-    q.push(fonte);
 
-    pii ans;
+    q.push(s);
+    dist[s.f][s.s] = 0;
 
     while (!q.empty())
     {
         pii atual = q.front();
-        ans = atual;
         q.pop();
 
-        for (auto add : mov)
+        for (auto add : mv)
         {
             if (val(atual.f + add.f, atual.s + add.s))
             {
                 q.push({atual.f + add.f, atual.s + add.s});
-                vis[atual.f + add.f][atual.s + add.s] = 1;
+                dist[atual.f + add.f][atual.s + add.s] = dist[atual.f][atual.s] + 1;
             }
         }
     }
-
-    cout << ans.f + 1 << " " << ans.s + 1 << endl;
 }
 
 void solve()
 {
-    cin >> linhas >> colunas;
+    vector<vector<int>> pos_trei;
 
-    for (int i = 0; i < linhas; i++)
-        for (int j = 0; j < colunas; j++)
+    cin >> lin >> col;
+
+    pii saida;
+    pii laila;
+
+    for (int i = 0; i < lin; i++)
+        for (int j = 0; j < col; j++)
+        {
             cin >> M[i][j];
 
-    pii fonte;
-    for (int i = 0; i < linhas; i++)
-        for (int j = 0; j < colunas; j++)
-            if (M[i][j] == 'o')
-                fonte = {i, j};
+            if (M[i][j] >= '1' && M[i][j] <= '9')
+                pos_trei.pb({i, j, M[i][j] - '0'});
 
-    BFS(fonte);
+            else if (M[i][j] == 'E')
+                saida = {i, j};
+
+            else if (M[i][j] == 'S')
+                laila = {i, j};
+        }
+
+    BFS(saida);
+
+    int Laila = dist[laila.f][laila.s];
+
+    int ans = 0;
+
+    for (auto &v : pos_trei)
+    {
+        int distancia = dist[v[0]][v[1]];
+
+        if (Laila >= distancia)
+        {
+            ans += v[2];
+        }
+    }
+
+    cout << ans;
 }
 
 int32_t main()
