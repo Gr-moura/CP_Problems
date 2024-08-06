@@ -22,17 +22,17 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 const int MAX = 1010;
 
-int lin, col;
+vector<pii> mv = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+
+int linhas, colunas;
 
 char M[MAX][MAX];
 
-vector<vi> dist(MAX, vi(MAX, -1));
-
-vector<pii> mv = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+vector<vi> dist(MAX, vi(MAX, INF));
 
 bool val(int i, int j)
 {
-    if (i >= 0 && i < lin && j >= 0 && j < col && M[i][j] != 'T' && dist[i][j] == -1)
+    if (i >= 0 && i < linhas && j >= 0 && j < colunas && M[i][j] != 'T' && dist[i][j] == INF)
         return 1;
 
     return 0;
@@ -63,20 +63,20 @@ void BFS(pii s)
 
 void solve()
 {
-    vector<vector<int>> pos_trei;
+    vector<pair<pair<int, int>, int>> pos_trei;
 
-    cin >> lin >> col;
+    cin >> linhas >> colunas;
 
     pii saida;
     pii laila;
 
-    for (int i = 0; i < lin; i++)
-        for (int j = 0; j < col; j++)
+    for (int i = 0; i < linhas; i++)
+        for (int j = 0; j < colunas; j++)
         {
             cin >> M[i][j];
 
             if (M[i][j] >= '1' && M[i][j] <= '9')
-                pos_trei.pb({i, j, M[i][j] - '0'});
+                pos_trei.pb({{i, j}, M[i][j] - '0'});
 
             else if (M[i][j] == 'E')
                 saida = {i, j};
@@ -91,13 +91,14 @@ void solve()
 
     int ans = 0;
 
-    for (auto &v : pos_trei)
+    for (auto p : pos_trei)
     {
-        int distancia = dist[v[0]][v[1]];
+        pii coords = p.f;
+        int distancia = dist[coords.f][coords.s];
 
         if (Laila >= distancia)
         {
-            ans += v[2];
+            ans += p.s;
         }
     }
 
