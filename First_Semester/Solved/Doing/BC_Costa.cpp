@@ -22,31 +22,6 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
-    int n, ans = 0;
-    cin >> n;
-    unordered_map<int, int> qt;
-
-    vi v(n);
-    for (int i = 0; i < n; i++)
-    {
-        cin >> v[i];
-        qt[v[i]]++;
-    }
-
-    sort(all(v), greater<>());
-
-    for (int i = 0; i < n; i++)
-    {
-        int atual = v[i];
-        if (qt[atual] * atual >= qt[atual - 1] * (atual - 1) + qt[atual + 1] * (atual + 1))
-        {
-            qt[atual + 1] = 0;
-            qt[atual - 1] = 0;
-            ans += atual;
-        }
-    }
-
-    cout << ans;
 }
 
 int32_t main()
@@ -59,7 +34,7 @@ int32_t main()
 
     fast_io;
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
