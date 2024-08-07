@@ -22,7 +22,6 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
-    string a;
 }
 
 int32_t main()

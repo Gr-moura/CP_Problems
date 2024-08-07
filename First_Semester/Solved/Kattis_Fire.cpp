@@ -5,7 +5,6 @@ using namespace std;
 #define dbg(x) cout << #x << " = " << x << endl
 #define all(x) x.begin(), x.end()
 #define sz(a) ((int)((a).size()))
-// #define int long long
 #define endl '\n'
 #define f first
 #define s second
@@ -30,68 +29,64 @@ char M[MAX][MAX];
 int dist[MAX][MAX];
 bool vis[MAX][MAX];
 
-bool val(pii u)
+bool val_ms(pii p)
 {
-    return u.f >= 0 && u.s >= 0 && u.f < linhas && u.s < colunas && M[u.f][u.s] != '#' && !vis[u.f][u.s];
+    return p.f >= 0 && p.s >= 0 && p.f < linhas && p.s < colunas && M[p.f][p.s] != '#' && dist[p.f][p.s] == INF;
 }
 
-void BFS_MS(vector<pii> ms)
+bool val(pii p, int dis_anterior)
 {
-    memset(vis, 0, sizeof vis);
-    memset(dist, INF, sizeof dist);
+    return p.f >= 0 && p.s >= 0 && p.f < linhas && p.s < colunas && M[p.f][p.s] != '#' &&
+           dis_anterior + 1 < dist[p.f][p.s] && !vis[p.f][p.s];
+}
 
-    queue<pii> q;
-
-    for (auto s : ms)
+void BFS_MS(queue<pii> ms)
+{
+    while (!ms.empty())
     {
-        q.push(s);
-        vis[s.f][s.s] = 1;
-        dist[s.f][s.s] = 0;
-    }
+        pii atual = ms.front();
+        ms.pop();
 
-    while (!q.empty())
-    {
-        pii v = q.front();
-        q.pop();
-
-        for (auto u : mov)
+        for (auto viz : mov)
         {
-            u.f += v.f, u.s += v.s;
+            viz.f += atual.f, viz.s += atual.s;
 
-            if (val(u))
+            if (val_ms(viz))
             {
-                dist[u.f][u.s] = dist[v.f][v.s] + 1;
-                vis[u.f][u.s] = 1;
-                q.push(u);
+                dist[viz.f][viz.s] = dist[atual.f][atual.s] + 1;
+                ms.push(viz);
             }
         }
     }
 }
 
-int BFS(pii s)
+int BFS(pii fonte)
 {
-    memset(vis, 0, sizeof vis);
+    memset(vis, 0, sizeof(vis));
+
+    dist[fonte.f][fonte.s] = 0;
+    vis[fonte.f][fonte.s] = 1;
 
     queue<pii> q;
-    q.push(s), vis[s.f][s.s] = 1, dist[s.f][s.s] = 0;
+    q.push(fonte);
 
     while (!q.empty())
     {
-        pii v = q.front();
+        pii atual = q.front();
         q.pop();
 
-        if (v.f == 0 || v.f == linhas - 1 || v.s == 0 || v.s == colunas - 1)
-            return dist[v.f][v.s] + 1;
+        if (atual.f == 0 || atual.f == linhas - 1 || atual.s == 0 || atual.s == colunas - 1)
+            return dist[atual.f][atual.s];
 
-        for (auto u : mov)
+        for (auto viz : mov)
         {
-            u.f += v.f, u.s += v.s;
+            viz.f += atual.f, viz.s += atual.s;
 
-            if (val(u) && dist[v.f][v.s] + 1 < dist[u.f][u.s])
+            if (val(viz, dist[atual.f][atual.s]))
             {
-
-                q.push(u), vis[u.f][u.s] = 1;
-                dist[u.f][u.s] = dist[v.f][v.s] + 1;
+                dist[viz.f][viz.s] = dist[atual.f][atual.s] + 1;
+                q.push(viz);
+                vis[viz.f][viz.s] = 1;
             }
         }
     }
@@ -101,7 +96,8 @@ int BFS(pii s)
 
 void solve()
 {
-    vector<pii> ms;
+    memset(dist, INF, sizeof(dist));
+    queue<pii> ms;
     pii start;
 
     cin >> colunas >> linhas;
@@ -116,7 +112,10 @@ void solve()
                 start = {i, j};
 
             else if (M[i][j] == '*')
-                ms.pb({i, j});
+            {
+                ms.push({i, j});
+                dist[i][j] = 0;
+            }
         }
     }
 
@@ -127,11 +126,11 @@ void solve()
     //     for (int j = 0; j < colunas; j++)
     //     {
     //         if (M[i][j] == '#')
-    //             cout << "#";
-    //         else
-    //             cout << dist[i][j];
-    //     }
+    //             cout << "# ";
     //
+    //         else
+    //             cout << dist[i][j] << " ";
+    //     }
     //     cout << endl;
     // }
 
@@ -143,7 +142,7 @@ void solve()
         return;
     }
 
-    cout << ans << endl;
+    cout << ans + 1 << endl;
 }
 
 int32_t main()
