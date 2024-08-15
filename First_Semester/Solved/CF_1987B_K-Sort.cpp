@@ -22,6 +22,46 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
+    vi difs;
+    int ans = 0;
+
+    int n;
+    cin >> n;
+
+    vi nums(n);
+
+    for (int i = 0; i < n; i++)
+        cin >> nums[i];
+
+    int anterior = nums[0];
+
+    for (int i = 1; i < n; i++)
+    {
+        int atual = nums[i];
+
+        if (atual < anterior)
+        {
+            difs.pb(anterior - atual);
+            continue;
+        }
+
+        anterior = atual;
+    }
+
+    sort(all(difs));
+
+    int soma = 0;
+
+    int sz = difs.size();
+
+    for (int i = 0; i < sz; i++)
+    {
+        difs[i] -= soma;
+        ans += (sz - i + 1) * difs[i];
+        soma += difs[i];
+    }
+
+    cout << ans << endl;
 }
 
 int32_t main()
@@ -34,7 +74,7 @@ int32_t main()
 
     fast_io;
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
