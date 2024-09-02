@@ -79,9 +79,9 @@ void solve()
         // diferentes ou mais, e possivel de se criar um retangulo ali (ja
         // que as diagonais de um retangulo sao sempre congruentes)
         //
-        // Vemos as posicoes de L e R e o valor entre elas. Se for igual, como
-        // so existe apenas uma diagonal por ponto, passamos ambos adiante, pois
-        // se aumentasse so em um, ou ficaria muito baixo, ou muito alto
+        // Vemos as posicoes de L e R e o valor entre elas. Se for igual a buscar,
+        // como so existe apenas uma diagonal por ponto, passamos ambos adiante,
+        // pois se aumentasse so em um, ou ficaria muito baixo, ou muito alto
         //
         // Se for menor, aumentamos o R e mantemos o L, pois se diminuirmos o L,
         // estaremos olhando em uma diagonal ja verificada.

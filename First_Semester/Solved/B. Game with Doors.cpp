@@ -10,11 +10,11 @@ using namespace std;
 #define f first
 #define s second
 #define pb push_back
-#define lb(vect, x) lower_bound(all(vect), x) - vect.begin()
-#define ub(vect, x) upper_bound(all(vect), x) - vect.begin()
+#define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
+#define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
 typedef long long ll;
-typedef pair<int, int> ii;
+typedef pair<int, int> pii;
 typedef vector<int> vi;
 
 const int INF = 0x3f3f3f3f;

@@ -5,6 +5,7 @@ using namespace std;
 #define dbg(x) cout << #x << " = " << x << endl
 #define all(x) x.begin(), x.end()
 #define sz(a) ((int)((a).size()))
+#define int long long
 #define endl '\n'
 #define f first
 #define s second
@@ -19,54 +20,44 @@ typedef vector<int> vi;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
-const int MAX = 2e5 + 10;
-
-vector<vector<int>> g(MAX);
-vector<vector<int>> caminho(100);
-
-vi vis(MAX);
-
-int ans = 0;
-
-void DFS(int v)
-{
-    vis[v] = 1;
-
-    for (auto w : g[v])
-    {
-        if (vis[w] == 0)
-        {
-            caminho[w % 100] = caminho[v % 100];
-            caminho[w % 100].pb(v);
-            DFS(w);
-
-            for (auto i : caminho[w % 100])
-            {
-                if (w < i)
-                    ans++;
-            }
-            caminho[w % 10].clear();
-        }
-    }
-}
 void solve()
 {
-    int vertices;
-    cin >> vertices;
+    int n;
+    cin >> n;
 
-    for (int i = 0; i < vertices - 1; i++)
+    string mat;
+    cin >> mat;
+
+    int colunas = n - 2;
+
+    if (n < 4)
     {
-        int u, v;
-        cin >> u >> v;
-        u--, v--;
-
-        g[u].pb(v);
-        g[v].pb(u);
+        cout << "No\n";
+        return;
     }
 
-    DFS(0);
+    for (int i = 0; i < n; i++)
+    {
+        if (mat[i] == '0')
+        {
+            colunas = i - 1;
+            break;
+        }
+    }
 
-    cout << ans;
+    if (colunas <= 0)
+    {
+        cout << "No\n";
+        return;
+    }
+
+    if (colunas * colunas == n)
+    {
+        cout << "Yes\n";
+        return;
+    }
+
+    cout << "No\n";
 }
 
 int32_t main()
@@ -79,7 +70,7 @@ int32_t main()
 
     fast_io;
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

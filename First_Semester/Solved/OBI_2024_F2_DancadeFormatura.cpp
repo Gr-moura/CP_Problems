@@ -26,7 +26,7 @@ void solve()
     for (int i = 0; i < linhas; i++)
         Linhas[i] = i;
 
-    for (int i = 0; i < linhas; i++)
+    for (int i = 0; i < colunas; i++)
         Colunas[i] = i;
 
     int a = 1;
