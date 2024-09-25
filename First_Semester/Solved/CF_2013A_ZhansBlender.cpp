@@ -22,6 +22,13 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
+    int n;
+    cin >> n;
+
+    int fruits, second;
+    cin >> fruits >> second;
+
+    cout << (n + min(fruits, second) - 1) / (min(fruits, second)) << endl;
 }
 
 int32_t main()
