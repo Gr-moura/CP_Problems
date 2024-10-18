@@ -1,3 +1,7 @@
+#ifndef ONPC
+#include "Headers.h"
+#endif
+
 #include <bits/stdc++.h>
 using namespace std;
 

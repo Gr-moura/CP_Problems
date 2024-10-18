@@ -1,6 +1,8 @@
+#ifdef ONPC
+#include "Headers.h"
+#endif
+
 #include <bits/stdc++.h>
-#include <iostream>
-#include <vector>
 using namespace std;
 
 #define fast_io cin.tie(0)->sync_with_stdio(0);

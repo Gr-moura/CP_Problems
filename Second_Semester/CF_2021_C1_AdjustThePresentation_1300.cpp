@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
 
 #define fast_io cin.tie(0)->sync_with_stdio(0);
