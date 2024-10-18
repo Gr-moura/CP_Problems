@@ -1,4 +1,3 @@
-#include <algorithm>
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -21,56 +20,64 @@ typedef vector<int> vi;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
+const int MAX = 2e5 + 10;
 int n;
-vector<int> a, b, c;
-vector<int> memo;
+vi nums;
 
-int dp(int dia, char ultimo, int vezes)
+map<pii, int> memo;
+
+// 0, n = 0
+// max (anterior + pegar ele, anterior + nao pegar ele)
+
+int dp(int fim, int ultimo)
 {
-    if (vezes >= 3)
-        return -LINF;
-    if (dia <= 0)
+    if (fim == n)
         return 0;
 
-    if (memo[dia] != -1)
-        return memo[dia];
+    if (memo[{fim, ultimo}] != 0)
+        return memo[{fim, ultimo}];
 
-    int A = 1, B = 1, C = 1;
+    if (ultimo + 1 == nums[fim])
+    {
+        return memo[{fim, ultimo}] = max(dp(fim + 1, nums[fim]) + 1, dp(fim + 1, ultimo));
+    }
 
-    if (ultimo == 'a')
-        A = vezes + 1;
-
-    else if (ultimo == 'b')
-        B = vezes + 1;
-
-    else if (ultimo == 'c')
-        C = vezes + 1;
-
-    vector<int> ma(3);
-    ma[0] = dp(dia - 1, 'a', A) + a[dia - 1];
-    ma[1] = dp(dia - 1, 'b', B) + b[dia - 1];
-    ma[2] = dp(dia - 1, 'c', C) + c[dia - 1];
-
-    return memo[dia] = *max_element(all(ma));
+    return memo[{fim, ultimo}] = dp(fim + 1, ultimo);
 }
 
 void solve()
 {
     cin >> n;
 
-    a.resize(n);
-    b.resize(n);
-    c.resize(n);
-    memo.resize(n + 10, -1);
+    nums.resize(n);
 
     for (int i = 0; i < n; i++)
-        cin >> a[i] >> b[i] >> c[i];
-
-    for (int i = 0; i < N; i++)
     {
+        cin >> nums[i];
     }
 
-    cout << dp(n, 'b', 0);
+    pii ans = {0, 0};
+    for (int i = 0; i < n; i++)
+    {
+        if (dp(i, nums[i]) >= ans.f)
+        {
+            ans.f = dp(i, nums[i]);
+            ans.s = i;
+        }
+    }
+
+    cout << ans.f + 1 << endl;
+
+    int anterior = nums[ans.s] - 1;
+
+    for (int i = ans.s; i < n; i++)
+    {
+        if (nums[i] == anterior + 1)
+        {
+            cout << i + 1 << " ";
+            anterior += 1;
+        }
+    }
 }
 
 int32_t main()

@@ -22,6 +22,38 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
+    int n, m, q;
+    cin >> n >> m >> q;
+
+    map<int, int> pending;
+
+    vi members(n);
+
+    for (auto &i : members)
+        cin >> i;
+
+    vi sections(m);
+
+    for (auto &i : sections)
+        cin >> i;
+
+    int pos = 0;
+
+    for (int i = 0; i < m; i++)
+    {
+        if (pos < n && sections[i] == members[pos])
+            pos++;
+
+        else if (pending[sections[i]] == 0)
+        {
+            cout << "TIDAK\n";
+            return;
+        }
+
+        pending[sections[i]] = 1;
+    }
+
+    cout << "YA\n";
 }
 
 int32_t main()

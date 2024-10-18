@@ -1,4 +1,7 @@
 #include <bits/stdc++.h>
+#include <iostream>
+#include <queue>
+#include <vector>
 using namespace std;
 
 #define fast_io cin.tie(0)->sync_with_stdio(0);
@@ -22,6 +25,53 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
+    int n, x;
+    cin >> n >> x;
+
+    vi nums;
+
+    map<int, int> sobrou;
+
+    for (int i = 0; i < n; i++)
+    {
+        int temp;
+        cin >> temp;
+        nums.pb(temp);
+    }
+
+    sort(all(nums));
+
+    int buscado = 0;
+    int ultimo = -1;
+    for (int i = 0; i < n; i++)
+    {
+        if (ultimo == nums[i])
+        {
+            sobrou[ultimo]++;
+            continue;
+        }
+
+        ultimo = nums[i];
+
+        if (buscado == nums[i])
+        {
+            buscado++;
+            continue;
+        }
+
+        if (buscado - x >= 0 && sobrou[buscado % x] > 0)
+        {
+            buscado++;
+            continue;
+        }
+        else
+        {
+            cout << buscado << endl;
+            return;
+        }
+    }
+
+    cout << buscado + 1 << endl;
 }
 
 int32_t main()

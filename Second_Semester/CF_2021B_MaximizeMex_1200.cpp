@@ -1,4 +1,6 @@
 #include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
 using namespace std;
 
 #define fast_io cin.tie(0)->sync_with_stdio(0);
@@ -22,6 +24,43 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
+    int n, x;
+    cin >> n >> x;
+
+    int atual = 0;
+
+    vector<int> freq(n, 0);
+
+    for (int i = 0; i < n; i++)
+    {
+        int temp;
+        cin >> temp;
+
+        if (temp < n)
+        {
+            freq[temp]++;
+        }
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        if (freq[atual] == 0)
+        {
+            cout << atual << endl;
+            return;
+        }
+
+        if (freq[atual] > 1)
+        {
+            if (x + atual < n)
+                // Como você mexe somente o último por vez, não
+                // existe o risco de você retirar uma opção não-ótima
+                freq[x + atual] += freq[atual] - 1;
+        }
+
+        atual++;
+    }
+    cout << atual << endl;
 }
 
 int32_t main()
