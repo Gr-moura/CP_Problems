@@ -1,4 +1,3 @@
-#include "Headers.h"
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -23,6 +22,19 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
+    int n;
+    cin >> n;
+
+    int um = 1, dois = 1;
+
+    for (int i = 1; i < n; i++)
+    {
+        int temp = um;
+        um = dois;
+        dois = temp + dois;
+    }
+
+    cout << dois;
 }
 
 int32_t main()
@@ -35,7 +47,6 @@ int32_t main()
 
     fast_io;
     int t = 1;
-    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
