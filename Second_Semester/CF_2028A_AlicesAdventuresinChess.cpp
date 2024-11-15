@@ -1,0 +1,126 @@
+#include "Headers.h"
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fast_io cin.tie(0)->sync_with_stdio(0);
+#define dbg(x) cout << #x << " = " << x << endl
+#define all(x) x.begin(), x.end()
+#define sz(a) ((int)((a).size()))
+#define int long long
+#define endl '\n'
+#define f first
+#define s second
+#define pb push_back
+#define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
+#define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
+
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef vector<int> vi;
+
+const int INF = 0x3f3f3f3f;
+const ll LINF = 0x3f3f3f3f3f3f3f3fll;
+
+void solve()
+{
+    int n;
+    pii final;
+    cin >> n >> final.f >> final.s;
+
+    string path;
+    cin >> path;
+
+    pii atual = {0, 0};
+
+    int ans = 0;
+    for (auto c : path)
+    {
+        if (c == 'N')
+        {
+            atual.s++;
+        }
+        if (c == 'E')
+        {
+            atual.f++;
+        }
+        if (c == 'S')
+        {
+            atual.s--;
+        }
+        if (c == 'W')
+        {
+            atual.f--;
+        }
+        if (atual == final)
+        {
+            ans = 1;
+        }
+    }
+
+    if (ans)
+    {
+        cout << "YES" << endl;
+        return;
+    }
+
+    for (int i = 0; i < 20000; i++)
+    {
+        for (auto c : path)
+        {
+            if (c == 'N')
+            {
+                atual.s++;
+            }
+            if (c == 'E')
+            {
+                atual.f++;
+            }
+            if (c == 'S')
+            {
+                atual.s--;
+            }
+            if (c == 'W')
+            {
+                atual.f--;
+            }
+            if (atual == final)
+            {
+                ans = 1;
+                cout << "YES" << endl;
+                return;
+            }
+        }
+    }
+
+    if (ans)
+    {
+        cout << "YES" << endl;
+        return;
+    }
+
+    cout << "NO" << endl;
+}
+
+int32_t main()
+{
+    // casas decimais
+    // cout << fixed << setprecision(1);
+
+    // horario
+    // cout << setfill('0') << setw(2);
+
+    fast_io;
+    int t = 1;
+    cin >> t;
+
+    for (int i = 1; i <= t; i++)
+    {
+        solve();
+
+        // #ifdef ONPC
+        //         cout << "__________________________" << endl;
+        // #endif
+    }
+
+    return 0;
+}
