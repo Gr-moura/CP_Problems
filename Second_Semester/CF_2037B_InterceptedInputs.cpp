@@ -26,36 +26,33 @@ void solve()
     int n;
     cin >> n;
 
-    vi nums(n);
-    for (auto &i : nums)
-        cin >> i;
+    set<int> a;
+    int qt = 0;
 
-    int ans = 0;
-
-    vi somas(n + 1, 0);
-    for (int i = 1; i < n + 1; i++)
+    for (int i = 0; i < n; i++)
     {
-        somas[i] = somas[i - 1] + nums[i - 1];
+        int temp;
+        cin >> temp;
+        a.insert(temp);
+        qt++;
     }
 
-    int ultimo = -1;
-    for (int r = 0; r < n; r++)
+    qt -= 2;
+
+    for (auto i : a)
     {
-        for (int l = ultimo + 1; l <= r; l++)
+        if (i * i > qt)
+            break;
+
+        if (qt % i == 0 && a.find(qt / i) != a.end())
         {
-            if (somas[r + 1] - somas[l] == 0)
-            {
-                ultimo = r;
-                ans++;
-                break;
-            }
+            cout << i << " " << qt / i << endl;
+            return;
         }
     }
-
-    cout << ans << endl;
 }
 
-int main()
+int32_t main()
 {
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -64,12 +61,16 @@ int main()
     // cout << setfill('0') << setw(2);
 
     fast_io;
-    long long t = 1;
+    int t = 1;
     cin >> t;
 
-    for (long long i = 1; i <= t; i++)
+    for (int i = 1; i <= t; i++)
     {
         solve();
+
+        // #ifdef ONPC
+        //         cout << "__________________________" << endl;
+        // #endif
     }
 
     return 0;
