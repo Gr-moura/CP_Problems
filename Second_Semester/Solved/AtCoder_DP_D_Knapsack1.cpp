@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <unordered_map>
+
 using namespace std;
 
 #define fast_io cin.tie(0)->sync_with_stdio(0);
@@ -26,51 +27,47 @@ vector<pii> items;
 
 vector<vector<int>> memo;
 
-int dp(int W, int i)
-{
-    if (i == n)
-        return 0;
-
-    if (memo[W][i])
-        return memo[W][i];
-
-    if (i < n && W < items[i].f)
-        return dp(W, i + 1);
-
-    return memo[W][i] = max(dp(W, i + 1), dp(W - items[i].f, i + 1) + items[i].s);
-}
-
-void solve()
-{
-    cin >> n >> W;
-    items.resize(n);
-    memo.resize(W + 1, vector<int>(n + 1));
-
-    for (int i = 0; i < n; i++)
-        cin >> items[i].f >> items[i].s;
-
-    cout << dp(W, 0) << endl;
-}
-
-int32_t main()
-{
-    // casas decimais
-    // cout << fixed << setprecision(1);
-
-    // horario
-    // cout << setfill('0') << setw(2);
-
-    fast_io;
-    int t = 1;
-
-    for (int i = 1; i <= t; i++)
-    {
-        solve();
-
-        // #ifdef ONPC
-        //         cout << "__________________________" << endl;
-        // #endif
-    }
-
+int dp(int W, int i) {
+  if (i == n)
     return 0;
+
+  if (memo[W][i])
+    return memo[W][i];
+
+  if (i < n && W < items[i].f)
+    return dp(W, i + 1);
+
+  return memo[W][i] = max(dp(W, i + 1), dp(W - items[i].f, i + 1) + items[i].s);
+}
+
+void solve() {
+  cin >> n >> W;
+  items.resize(n);
+  memo.resize(W + 1, vector<int>(n + 1));
+
+  for (int i = 0; i < n; i++)
+    cin >> items[i].f >> items[i].s;
+
+  cout << dp(W, 0) << endl;
+}
+
+int32_t main() {
+  // casas decimais
+  // cout << fixed << setprecision(1);
+
+  // horario
+  // cout << setfill('0') << setw(2);
+
+  fast_io;
+  int t = 1;
+
+  for (int i = 1; i <= t; i++) {
+    solve();
+
+    // #ifdef ONPC
+    //         cout << "__________________________" << endl;
+    // #endif
+  }
+
+  return 0;
 }
