@@ -25,45 +25,81 @@ bool prime(ll a) { if (a == 1) return 0; for (int i = 2; i*i <= a; i++) if (a % 
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
+vector<vector<pii>> iniciais(9);
+queue<pair<int, int>> q;
+
 int n, m, p;
 int v[9];
-int respostas[9];
-// tipo, dist, player
-int board[1000][1000][3];
+int cells[9];
+char board[1000][1000];
+int minDist[1000][1000];
 
 bool valido(int x, int y, int player, int dist)
 {
     if (x < 0 || x >= n || y < 0 || y >= m) return false;
-    if (board[x][y][0] != '.') return false;
-    if (dist >= board[x][y][1]) return false;
+    if (board[x][y] != '.' and board[x][y] != player + '1') return false;
+    if (dist > v[player] or dist >= minDist[x][y]) return false;
 
     return true;
 }
 
 vector<pii> movimentos = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 
-void BFS(int player)
+void BFS()
 {
-    // Se board[x][y][0] >= 1 && <= 9, dist = 0
-    // dist = dist % v[player]
+    for (int i = 0; i < p; i++)
+    {
+        for (auto u : iniciais[i])
+        {
+            for (auto [dx, dy] : movimentos)
+            {
+                int nx = u.f + dx, ny = u.s + dy;
+                if (valido(nx, ny, i, 1))
+                {
+                    q.push({u.f, u.s});
+                    break;
+                }
+            }
+        }
+    }
 
-    queue<tuple<int, int, int, int>> q;
-    q.push({0, 0, player, 0});
+    queue<tuple<int, int, int>> q2;
+
     while (!q.empty())
     {
-        auto [x, y, player, dist] = q.front();
-        q.pop();
+        auto [x, y] = q.front();
+        int player = board[x][y] - '1';
 
-        if (!valido(x, y, player, dist % v[player])) continue;
-
-        board[x][y][1] = dist % v[player];
-        board[x][y][2] = player;
-
-        for (auto [dx, dy] : movimentos)
+        while (!q.empty() && board[q.front().f][q.front().s] - '1' == player)
         {
-            int nx = x + dx;
-            int ny = y + dy;
-            q.push({nx, ny, player, dist + 1});
+            minDist[q.front().f][q.front().s] = 0;
+            q2.push({q.front().f, q.front().s, 0});
+            q.pop();
+        }
+
+        while (!q2.empty())
+        {
+            auto [x2, y2, d2] = q2.front();
+            q2.pop();
+
+            if (d2 == v[player])
+            {
+                q.push({x2, y2});
+                continue;
+            }
+
+            for (auto [i, j] : movimentos)
+            {
+                if (valido(x2 + i, y2 + j, player, d2 + 1))
+                {
+                    if (board[x2 + i][y2 + j] == '.') cells[player]++;
+
+                    board[x2 + i][y2 + j] = player + '1';
+                    minDist[x2 + i][y2 + j] = d2 + 1;
+
+                    q2.push({x2 + i, y2 + j, d2 + 1});
+                }
+            }
         }
     }
 }
@@ -72,43 +108,36 @@ void solve()
 {
     cin >> n >> m >> p;
     for (int i = 0; i < p; i++)
+    {
         cin >> v[i];
-
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < m; j++)
-        {
-            cin >> board[i][j][0];
-            board[i][j][1] = -1;
-            board[i][j][2] = -1;
-        }
-    }
-
-    for (int i = 0; i < p; i++)
-    {
-        BFS(i);
+        v[i] = min(v[i], n * m);
     }
 
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
         {
-            if (board[i][j][0] == '.')
+            minDist[i][j] = INF;
+
+            cin >> board[i][j];
+            if (board[i][j] >= '1' && board[i][j] <= '9')
             {
-                respostas[board[i][j][2]]++;
+                minDist[i][j] = 0;
+
+                cells[board[i][j] - '1']++;
+                iniciais[board[i][j] - '1'].push_back({i, j});
             }
         }
     }
 
+    BFS();
+
     for (int i = 0; i < p; i++)
     {
-        cout << respostas[i] << " ";
+        cout << cells[i] << " ";
     }
 
     cout << endl;
-
-    // distancia de cada jogador i mod p[i]
-    // rodar BFS até 9 vezes, olhar distancia mais proxima
 }
 
 int32_t main()

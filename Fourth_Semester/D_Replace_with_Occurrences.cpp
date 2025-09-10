@@ -28,38 +28,55 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
 void solve()
 {
-    int n, k, m;
-    cin >> n >> k >> m;
+    int n;
+    cin >> n;
 
-    vi a(n);
-    int sum = 0;
-    for (auto &x : a)
+    vi v(n);
+    vi qt(n + 1, 0);
+
+    for (int i = 0; i < n; i++)
     {
-        cin >> x;
-        sum += x;
-    }
-    sort(all(a));
-    int maxRemoverHerois = min(m, n - 1);
-
-    long double maxMedia = -1;
-    for (int i = 0; i <= maxRemoverHerois; i++)
-    {
-        if (i > 0) sum -= a[i - 1];
-
-        int heroisRestantes = n - i;
-        int poderRestante = m - i;
-
-        int maxSoma = min(poderRestante, k * (heroisRestantes));
-        maxMedia = max(maxMedia, ((long double)sum + maxSoma) / heroisRestantes);
+        cin >> v[i];
+        qt[v[i]]++;
     }
 
-    cout << maxMedia << endl;
+    for (int i = 1; i <= n; i++)
+    {
+        if (qt[i] % i != 0)
+        {
+            cout << -1 << endl;
+            return;
+        }
+    }
+
+    vi ans(n);
+    int atual = 1;
+    vector<pii> atQt(n + 1, {0, 0});
+
+    for (int i = 0; i < n; i++)
+    {
+        if (atQt[v[i]].f == 0)
+        {
+            atQt[v[i]].f = atual;
+            atual++;
+        }
+
+        ans[i] = atQt[v[i]].f;
+        atQt[v[i]].s++;
+
+        if (atQt[v[i]].s == v[i])
+        {
+            atQt[v[i]].f = 0;
+            atQt[v[i]].s = 0;
+        }
+    }
+    printv(ans);
 }
 
 int32_t main()
 {
     // casas decimais
-    cout << fixed << setprecision(10);
+    // cout << fixed << setprecision(1);
 
     // horario
     // cout << setfill('0') << setw(2);
@@ -69,6 +86,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

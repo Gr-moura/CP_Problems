@@ -28,38 +28,47 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
 void solve()
 {
-    int n, k, m;
-    cin >> n >> k >> m;
+    int n;
+    cin >> n;
 
-    vi a(n);
-    int sum = 0;
-    for (auto &x : a)
+    vi v(n);
+    for (int i = 0; i < n; i++)
     {
-        cin >> x;
-        sum += x;
-    }
-    sort(all(a));
-    int maxRemoverHerois = min(m, n - 1);
-
-    long double maxMedia = -1;
-    for (int i = 0; i <= maxRemoverHerois; i++)
-    {
-        if (i > 0) sum -= a[i - 1];
-
-        int heroisRestantes = n - i;
-        int poderRestante = m - i;
-
-        int maxSoma = min(poderRestante, k * (heroisRestantes));
-        maxMedia = max(maxMedia, ((long double)sum + maxSoma) / heroisRestantes);
+        cin >> v[i];
     }
 
-    cout << maxMedia << endl;
+    vi r(n);
+    vi ans(n, 0);
+    for (int i = 1; i <= n; i++)
+    {
+        r[i - 1] = i;
+    }
+
+    int index = 3;
+    while (n % index != 0 and n % index != index - 1)
+        index++;
+
+    vi ind(index);
+    ind[0] = index - 1;
+    for (int i = 1; i < index; i++)
+    {
+        ind[i] = i - 1;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        int complemento = (index - (v[i] % index)) % index;
+        ans[i] = r[ind[complemento]];
+        ind[complemento] += index;
+    }
+
+    printv(ans);
 }
 
 int32_t main()
 {
     // casas decimais
-    cout << fixed << setprecision(10);
+    // cout << fixed << setprecision(1);
 
     // horario
     // cout << setfill('0') << setw(2);
@@ -69,6 +78,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
