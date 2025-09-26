@@ -26,6 +26,7 @@ const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
 int n, k;
+int cnt[20010];
 
 int sum(vi &v)
 {

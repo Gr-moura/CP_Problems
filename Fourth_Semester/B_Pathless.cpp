@@ -1,0 +1,107 @@
+/* clang-format off */
+#include <bits/stdc++.h>
+#include <iostream>
+using namespace std;
+
+#define dbg(x) cout << #x << " = " << x << endl
+#define printv(a) {for(auto u:a) cout<<u<<" "; cout<<endl;}
+#define all(x) x.begin(), x.end()
+#define sz(a) ((int)((a).size()))
+#define int long long
+#define endl '\n'
+#define f first
+#define s second
+#define pb push_back
+#define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
+#define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
+
+typedef unsigned long long ull;
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef vector<int> vi;
+
+bool prime(ll a) { if (a == 1) return 0; if (a == 2) return 1; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
+
+const int MOD = 1e9 + 7, MAX = 1e5 + 10;
+const int INF = 0x3f3f3f3f;
+const ll LINF = 0x3f3f3f3f3f3f3f3fll;
+/* clang-format on */
+
+void solve()
+{
+    int n, s;
+    cin >> n >> s;
+
+    vi a(n);
+    vi qt(3, 0);
+    int minSum = 0;
+    for (int i = 0; i < n; i++)
+    {
+        cin >> a[i];
+        minSum += a[i];
+
+        qt[a[i]]++;
+    }
+
+    if (s == minSum)
+    {
+        cout << -1 << endl;
+        return;
+    }
+
+    // Se após um zero, tiver um, posso chegar a qualquer soma
+    // Após um zero sempre existe um dois, logo
+    // sempre posso adicionar +2 à resposta
+
+    // Após um dois sempre tem 1, logo
+    // sempre posso adicionar +3 à respostas
+
+    // Se s - minSum puder ser escrito na forma 2x + 3y
+    // não conseguimos mudar a
+
+    if ((s - minSum) >= 2)
+    {
+        cout << -1 << endl;
+        return;
+    }
+
+    while (qt[0]--)
+        cout << 0 << " ";
+
+    while (qt[2]--)
+        cout << 2 << " ";
+
+    while (qt[1]--)
+        cout << "1 ";
+
+    cout << endl;
+
+    return;
+}
+
+int32_t main()
+{
+    // casas decimais
+    // cout << fixed << setprecision(1);
+
+    // horario
+    // cout << setfill('0') << setw(2);
+
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
+    int t = 1;
+    cin >> t;
+
+    for (int i = 1; i <= t; i++)
+    {
+        solve();
+
+        // #ifdef ONPC
+        //         cout << "__________________________" << endl;
+        // #endif
+    }
+
+    return 0;
+}
