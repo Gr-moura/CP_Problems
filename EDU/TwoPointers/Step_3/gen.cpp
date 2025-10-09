@@ -42,10 +42,18 @@ int32_t main(int32_t argc, char **argv)
     for (int i = 0; i < t; i++)
     {
         int n = rand(1, 5);
-        int p = rand(1, 10000);
-        cout << n << " " << p << endl;
+        int m = rand(1, 5);
+        int s = rand(1, 50);
+        int A = rand(1, 5);
+        int B = rand(1, 5);
+        cout << n << " " << m << " " << s << " " << A << " " << B << endl;
 
         for (int j = 0; j < n; j++)
+        {
+            cout << rand(1, 10) << " ";
+        }
+        cout << endl;
+        for (int j = 0; j < m; j++)
         {
             cout << rand(1, 10) << " ";
         }
