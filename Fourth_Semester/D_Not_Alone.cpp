@@ -39,45 +39,53 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int n, k, kAtual = 0;
-unordered_map<int, int> cnt;
-
-void add(int x)
-{
-    cnt[x]++;
-    if (cnt[x] == 1) kAtual++;
-}
-
-void remove(int x)
-{
-    cnt[x]--;
-    if (cnt[x] == 0) kAtual--;
-}
-
-bool good()
-{
-    return kAtual <= k;
-}
 
 void solve()
 {
-    cin >> n >> k;
+    int n;
+    cin >> n;
 
-    vi a(n);
-    for (auto &i : a)
-        cin >> i;
-
-    int l = 0, ans = 0;
-    for (int r = 0; r < n; r++)
+    vector<pii> a(2 * n, {0, 0});
+    for (int i = 0; i < n; i++)
     {
-        add(a[r]);
-        while (!good())
-            remove(a[l++]);
-
-        ans += r - l + 1;
+        cin >> a[i].f;
+        a[i + n].f = a[i].f;
     }
 
-    cout << ans << endl;
+    int mod = 0;
+    for (int i = 1; i < 2 * n - 1; i++)
+    {
+        if (a[i] == a[i + 1] or a[i] == a[i - 1]) a[i].s = 1;
+    }
+
+    vi t(3);
+    for (int i = 1; i < 2 * n - 1; i++)
+    {
+        if (a[i - 1].s == 0 and a[i + 1].f == 0)
+        {
+            t[0] = a[i - 1].f, t[1] = a[i].f, t[2] = a[i + 1].f;
+            sort(all(t));
+
+            usados += ;
+            a[i + 1].s = 1;
+            a[i].s = 1;
+
+            if (i - 1 + n < 2 * n)
+            {
+                a[n + i - 1].s = 1;
+            }
+
+            if (i + n < 2 * n)
+            {
+                a[n + i].s = 1;
+            }
+
+            if (i + 1 + n < 2 * n)
+            {
+                a[n + i + 1].s = 1;
+            }
+        }
+    }
 }
 
 int32_t main()
@@ -93,7 +101,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

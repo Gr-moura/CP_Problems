@@ -40,49 +40,37 @@ const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
 
+int f(int x)
+{
+    int res = 0;
+    while (x)
+    {
+        res += x % 10;
+        x /= 10;
+    }
+
+    return res;
+}
+
 void solve()
 {
-    int n, p;
-    cin >> n >> p;
+    int n;
+    cin >> n;
 
-    vi a(2 * n);
-    int loop = 0;
-    for (int i = 0; i < n; i++)
+    vi a(110, 1);
+
+    for (int i = 1; i <= 100; i++)
     {
-        cin >> a[i];
-        a[n + i] = a[i];
-
-        loop += a[i];
-    }
-
-    int musicasJaEscutadas = (p / loop) * n;
-    int pontosFaltantes = p % loop;
-
-    if (pontosFaltantes == 0)
-    {
-        cout << 1 << " " << musicasJaEscutadas << endl;
-        return;
-    }
-
-    // Queremos o menor comprimento de segmento com soma >= pontosFaltantes
-    int l = 0, pontosAtuais = 0, mn = LINF, minL = -1;
-    for (int r = 0; r < 2 * n; r++)
-    {
-        pontosAtuais += a[r];
-        while (l <= r && pontosAtuais >= pontosFaltantes)
+        int sum = 0;
+        for (int j = 0; j < i; j++)
         {
-            if (mn > r - l + 1)
-            {
-                minL = l;
-                mn = r - l + 1;
-            }
-
-            pontosAtuais -= a[l++];
+            sum += f(a[j]);
         }
+
+        a[i] = sum;
     }
 
-    cout << minL + 1 << " ";
-    cout << musicasJaEscutadas + mn << endl;
+    cout << a[n] << endl;
 }
 
 int32_t main()

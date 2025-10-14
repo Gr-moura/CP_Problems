@@ -18,6 +18,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define all(x) x.begin(), x.end()
 #define sz(a) ((int)((a).size()))
 #define int long long
+#define endl '\n'
 #define f first
 #define s second
 #define pb push_back
@@ -39,32 +40,20 @@ const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
 
-int ask(int u, int v)
-{
-    cout << u << " " << v << '\n';
-    cout.flush();
-
-    int x;
-    cin >> x;
-
-    return x;
-}
-
 void solve()
 {
     int n;
     cin >> n;
 
-    for (int inc = 1; inc < n; inc++)
+    set<int> s;
+    for (int i = 0; i < n; i++)
     {
-        for (int u = 1; u <= n; u++)
-        {
-            int v = (u + inc) % n;
-            if (v == 0) v = n;
-
-            if (ask(u, v) == 1) return;
-        }
+        int temp;
+        cin >> temp;
+        s.insert(temp);
     }
+
+    cout << s.size() << endl;
 }
 
 int32_t main()
@@ -74,6 +63,10 @@ int32_t main()
 
     // horario
     // cout << setfill('0') << setw(2);
+
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
     int t = 1;
     cin >> t;

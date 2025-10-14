@@ -18,6 +18,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define all(x) x.begin(), x.end()
 #define sz(a) ((int)((a).size()))
 #define int long long
+#define endl '\n'
 #define f first
 #define s second
 #define pb push_back
@@ -38,33 +39,57 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-
-int ask(int u, int v)
-{
-    cout << u << " " << v << '\n';
-    cout.flush();
-
-    int x;
-    cin >> x;
-
-    return x;
-}
-
+bool matAdj[10][10];
 void solve()
 {
-    int n;
-    cin >> n;
+    int n, m;
+    cin >> n >> m;
 
-    for (int inc = 1; inc < n; inc++)
+    memset(matAdj, 0, sizeof(matAdj));
+
+    for (int i = 0; i < m; i++)
     {
-        for (int u = 1; u <= n; u++)
-        {
-            int v = (u + inc) % n;
-            if (v == 0) v = n;
+        int a, b;
+        cin >> a >> b;
+        a--, b--;
 
-            if (ask(u, v) == 1) return;
-        }
+        matAdj[a][b] = 1;
+        matAdj[b][a] = 1;
     }
+
+    int ans = LINF;
+    for (int i = 0; i < (1 << n); i++)
+    {
+        vi A, B;
+        int ind = 0;
+        for (int j = 1; j < (1 << n); j = j << 1)
+        {
+            if (i & j) A.pb(ind);
+            else B.pb(ind);
+
+            ind++;
+        }
+
+        int retirar = 0;
+        for (auto a : A)
+        {
+            for (auto b : A)
+            {
+                if (matAdj[a][b]) retirar++;
+            }
+        }
+        for (auto a : B)
+        {
+            for (auto b : B)
+            {
+                if (matAdj[a][b]) retirar++;
+            }
+        }
+
+        ans = min(ans, retirar / 2);
+    }
+
+    cout << ans << endl;
 }
 
 int32_t main()
@@ -75,8 +100,12 @@ int32_t main()
     // horario
     // cout << setfill('0') << setw(2);
 
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

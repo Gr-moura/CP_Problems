@@ -42,24 +42,37 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve()
 {
-    int n, s;
-    cin >> n >> s;
+    int n;
+    cin >> n;
+    vi b(n);
 
-    vi a(n);
-    for (auto &i : a)
+    for (auto &i : b)
         cin >> i;
 
-    int l = 0, sum = 0, ans = 0;
-    for (int r = 0; r < n; r++)
-    {
-        sum += a[r];
-        while (l < n && sum >= s)
-            sum -= a[l++];
+    vi a(n, 0);
+    a[0] = 1;
 
-        ans += l;
+    int atual = 2;
+    for (int i = 1; i < n; i++)
+    {
+        // Igual ao anterior
+        if (b[i] == b[i - 1] + 1)
+        {
+            a[i] = a[i - 1];
+            continue;
+        }
+
+        // Completamente novo
+        if (b[i] == b[i - 1] + i + 1)
+        {
+            a[i] = i + 1;
+            continue;
+        }
+
+        a[i] = a[i - (b[i] - b[i - 1])];
     }
 
-    cout << ans << endl;
+    printv(a);
 }
 
 int32_t main()
@@ -75,7 +88,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

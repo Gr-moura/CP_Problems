@@ -39,83 +39,43 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int n, k;
-
-template <class T> struct minqueue
+int rev(int x)
 {
-    deque<pair<T, int>> q;
+    int res = 0;
+    int inicial = 0;
 
-    void push(T x)
+    for (inicial = 31; inicial >= 0 && !((1 << inicial) & x); inicial--)
+        ;
+
+    int pot = 0;
+    while (inicial >= 0)
     {
-        int ct = 1;
-        while (q.size() and x < q.front().first)
-            ct += q.front().second, q.pop_front();
-        q.emplace_front(x, ct);
+        if (x & (1 << inicial))
+        {
+            res += (1 << pot);
+        }
+        pot++;
+        inicial--;
     }
-    void pop()
-    {
-        if (q.back().second > 1) q.back().second--;
-        else q.pop_back();
-    }
-    T min() { return q.back().first; }
-};
 
-template <class T> struct maxqueue
-{
-    deque<pair<T, int>> q;
-
-    void push(T x)
-    {
-        int ct = 1;
-        while (q.size() and x > q.front().first)
-            ct += q.front().second, q.pop_front();
-        q.emplace_front(x, ct);
-    }
-    void pop()
-    {
-        if (q.back().second > 1) q.back().second--;
-        else q.pop_back();
-    }
-    T max() { return q.back().first; }
-};
-
-minqueue<int> mnq;
-maxqueue<int> maq;
-
-void add(int x)
-{
-    mnq.push(x), maq.push(x);
-}
-
-bool good()
-{
-    return maq.max() - mnq.min() <= k;
-}
-
-void remove()
-{
-    mnq.pop(), maq.pop();
+    return res;
 }
 
 void solve()
 {
-    cin >> n >> k;
-    vi a(n);
+    int n;
+    cin >> n;
+    pair<int, double> p3;
 
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-
-    int l = 0, ans = 0;
-    for (int r = 0; r < n; r++)
+    if (int i = 2; i < 5)
     {
-        add(a[r]);
-        while (!good())
-            remove(), l++;
-
-        ans += r - l + 1;
+        cout << i;
     }
 
-    cout << ans << endl;
+    vector<pair<int, pii>> a;
+    a.pb({1, {1, 2}});
+
+    int d, b, c;
 }
 
 int32_t main()
@@ -131,7 +91,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

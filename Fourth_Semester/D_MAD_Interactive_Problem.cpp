@@ -39,47 +39,69 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
+int ask(vi &x)
+{
+    cout << "? " << x.size() << " ";
+    printv(x);
+
+    cout.flush();
+
+    int ret;
+    cin >> ret;
+
+    return ret;
+}
 
 void solve()
 {
     int n;
     cin >> n;
 
-    int a[n];
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
+    vi a(2 * n, 0);
 
-    int ans = LINF;
-
-    // da subarray terminada em i, GCD x minLen
-    map<int, int> subGCD[n];
-    subGCD[0][a[0]] = 0;
-
-    for (int i = 1; i < n; i++)
+    vi x;
+    x.pb(1);
+    for (int i = 2; i <= 2 * n; i++)
     {
-        subGCD[i][a[i]] = 0;
-
-        for (auto [gcdAntigo, minLen] : subGCD[i - 1])
+        x.pb(i);
+        int ret = ask(x);
+        if (ret != 0)
         {
-            int gcdNovo = gcd(gcdAntigo, a[i]);
-
-            if (!subGCD[i].count(gcdNovo)) subGCD[i][gcdNovo] = minLen + 1;
-            subGCD[i][gcdNovo] = min(subGCD[i][gcdNovo], minLen + 1);
+            a[i - 1] = ret;
+            x.pop_back();
         }
     }
 
-    for (int i = 0; i < n; i++)
+    x.clear();
+    vi w;
+    w.pb(2 * n);
+    map<int, int> qt;
+
+    qt[a[2 * n - 1]]++;
+    for (int i = 2 * n - 1; i >= 1; i--)
     {
-        if (subGCD[i].count(1)) ans = min(ans, subGCD[i][1]);
+        qt[a[i - 1]]++;
+
+        if (a[i - 1] == 0 or qt[a[i - 1]] < 2)
+        {
+            w.pb(i);
+
+            if (a[i - 1]) continue;
+
+            int ret = ask(w);
+            if (ret != 0)
+            {
+                a[i - 1] = ret;
+                qt[a[i - 1]]++;
+
+                w.pop_back();
+            }
+        }
     }
 
-    if (ans == LINF)
-    {
-        cout << -1 << endl;
-        return;
-    }
-
-    cout << ans + 1 << endl;
+    cout << "! ";
+    printv(a);
+    cout.flush();
 }
 
 int32_t main()
@@ -95,7 +117,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    // cin >> t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
