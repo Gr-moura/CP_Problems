@@ -22,6 +22,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define dbg(x) cout << #x << " = " << x << endl
 #define printv(a) {for(auto u:a) cout<<u<<" "; cout<<endl;}
 #define all(x) x.begin(), x.end()
+#define sz(a) ((int)((a).size()))
 #define int long long
 #define endl '\n'
 #define f first
@@ -44,86 +45,69 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
-
-// DSU em O(a(n))
-struct DSU
+struct figure
 {
-    vector<int> id, sz;
+    int x1, y1;
+    int x2, y2;
 
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
+    figure(int x1, int y1, int x2, int y2) : x1(x1), y1(y1), x2(x2), y2(y2) {}
 };
 
-bool valido(int weight, vi &regra)
+bool inside(double x1, double y1, figure b)
 {
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
+    if (x1 < b.x1) return false;
+    if (y1 < b.y1) return false;
+
+    if (x1 > b.x2) return false;
+    if (y1 > b.y2) return false;
 
     return true;
 }
 
-ll kruskal(int n, vi &regra)
+void solve()
 {
-    DSU dsu(n);
+    int x1, y1, x2, y2;
+    cin >> x1 >> y1 >> x2 >> y2;
+    figure a(x1, y1, x2, y2);
 
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
+    cin >> x1 >> y1 >> x2 >> y2;
+    figure b(x1, y1, x2, y2);
+
+    cin >> x1 >> y1 >> x2 >> y2;
+    figure c(x1, y1, x2, y2);
+
+    // Ver se algum dos pontos no perímetro está contido
+    for (double x = a.x1; x <= a.x2; x += 0.5)
     {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
+        if (!inside(x, a.y1, b) and !inside(x, a.y1, c))
         {
-            cost |= w;
-            dsu.unite(x, y);
+            cout << "YES\n";
+            return;
+        }
+
+        if (!inside(x, a.y2, b) and !inside(x, a.y2, c))
+        {
+            cout << "YES\n";
+            return;
         }
     }
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
+    for (double y = a.y1; y <= a.y2; y += 0.5)
     {
-        if (dsu.find(i) != conjunto) return -1;
+        if (!inside(a.x1, y, b) and !inside(a.x1, y, c))
+        {
+            cout << "YES\n";
+            return;
+        }
+
+        if (!inside(a.x2, y, b) and !inside(a.x2, y, c))
+        {
+            cout << "YES\n";
+            return;
+        }
     }
 
-    return cost;
-}
-
-void solve()
-{
-    cin >> vertices >> arestas;
-    edg.clear();
-
-    for (int i = 0; i < arestas; i++)
-    {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
-
-        edg.emplace_back(c, u, v);
-    }
-
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
-
-    cout << minCost << endl;
+    cout << "NO\n";
 }
 
 int32_t main()
@@ -142,7 +126,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -38,92 +39,66 @@ typedef vector<int> vi;
 void NO() { cout << "NO" << endl; }
 void YES() { cout << "YES" << endl; }
 
-bool prime(ll a) { if (a == 1) return 0; if (a == 2) return 1; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
+bool prime(ll a) { if (a <= 1) return 0; if (a == 2) return 1; if (a % 2 == 0) return 0; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
 
-const int MOD = 1e9 + 7, MAX = 1e5 + 10;
+const int MOD = 1e9 + 7, MAX = 2e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
+vector<vector<int>> divs(MAX);
 
-// DSU em O(a(n))
-struct DSU
+void preencherDivs(int n)
 {
-    vector<int> id, sz;
-
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
+    for (int i = 1; i < n; i++)
     {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
-}
-
-ll kruskal(int n, vi &regra)
-{
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
+        for (int j = 1; j * j <= i; j++)
         {
-            cost |= w;
-            dsu.unite(x, y);
+            if (i % j != 0) continue;
+
+            divs[i].pb(j);
+            if (j * j != i) divs[i].pb(i / j);
         }
     }
-
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
 }
 
+// Você consegue um gcd x do split se você for 3x ou >= 4x
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    int n, k;
+    cin >> n >> k;
 
-    for (int i = 0; i < arestas; i++)
+    // Difference array de 0 até n - 1
+    vi da(n, 0);
+    vi qt(n + 1, 0);
+
+    for (int i = 0; i < n; i++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        int a;
+        cin >> a;
 
-        edg.emplace_back(c, u, v);
+        da[0]++;
+
+        if (n != 1) da[a / 4 + 1]--;
+
+        for (auto j : divs[a])
+            if (j > a / 4) qt[j]++;
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
+    partial_sum(all(da), da.begin());
+
+    for (int i = 0; i < n; i++)
     {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
+        qt[i] += da[i];
     }
 
-    cout << minCost << endl;
+    for (int i = n; i >= 0; i--)
+    {
+        if (qt[i] >= n - k)
+        {
+            cout << i << endl;
+            return;
+        }
+    }
 }
 
 int32_t main()
@@ -143,6 +118,8 @@ int32_t main()
 
     int t = 1;
     cin >> t;
+
+    preencherDivs(MAX);
 
     for (int i = 1; i <= t; i++)
     {

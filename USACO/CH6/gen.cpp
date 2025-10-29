@@ -37,16 +37,16 @@ int32_t main(int32_t argc, char **argv)
 {
     _, srand(atoi(argv[1]));
 
-    int t = 4;
+    int t = 1;
     // cout << t << endl;
     for (int i = 0; i < t; i++)
     {
-        int n = rand(1, 20);
+        int n = rand(1, 5);
         cout << n << endl;
 
         for (int j = 0; j < n; j++)
         {
-            cout << rand(1, 1000) << " ";
+            cout << rand(1, 10) << " " << rand(1, 10) << endl;
         }
         cout << endl;
     }

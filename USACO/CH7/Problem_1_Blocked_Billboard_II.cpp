@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -38,98 +39,67 @@ typedef vector<int> vi;
 void NO() { cout << "NO" << endl; }
 void YES() { cout << "YES" << endl; }
 
-bool prime(ll a) { if (a == 1) return 0; if (a == 2) return 1; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
+bool prime(ll a) { if (a <= 1) return 0; if (a == 2) return 1; if (a % 2 == 0) return 0; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
 
 const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
 
-// DSU em O(a(n))
-struct DSU
+struct figure
 {
-    vector<int> id, sz;
+    int x1, y1;
+    int x2, y2;
 
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
+    figure(int a, int b, int c, int d) : x1(a), y1(b), x2(c), y2(d) {}
 
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
+    int area() { return (x2 - x1) * (y2 - y1); }
+    int width() { return x2 - x1; }
+    int height() { return y2 - y1; }
 };
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
-}
-
-ll kruskal(int n, vi &regra)
-{
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
-
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
-}
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    int x1, y1, x2, y2;
+    cin >> x1 >> y1 >> x2 >> y2;
+    figure lm(x1, y1, x2, y2);
 
-    for (int i = 0; i < arestas; i++)
+    cin >> x1 >> y1 >> x2 >> y2;
+    figure cf(x1, y1, x2, y2);
+
+    // Totalmente coberto
+    if (cf.x1 <= lm.x1 and cf.x2 >= lm.x2 and cf.y1 <= lm.x1 and cf.y2 >= lm.y2)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
-
-        edg.emplace_back(c, u, v);
+        cout << 0 << endl;
+        return;
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
+    // Totalmente descoberto
+    if (cf.y2 <= lm.y1 or cf.x2 <= lm.y2 or cf.x1 >= lm.x2 or cf.y1 >= lm.y2)
     {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
+        cout << lm.area() << endl;
+        return;
     }
 
-    cout << minCost << endl;
+    // Y da intersecao só vale se for = min(y2) - max(y1)
+    int minY2 = min(cf.y2, lm.y2);
+    int maxY1 = max(cf.y1, lm.y1);
+    int minX2 = min(cf.x2, lm.x2);
+    int maxX1 = max(cf.x1, lm.x1);
+
+    int hI = minY2 - maxY1;
+    int lI = minX2 - maxX1;
+
+    int width = hI == lm.height ? lm.width - lI : lm.width;
+    int height = lI == lm.width ? lm.height - hI : lm.height;
+
+    cout << width * height << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
+    freopen("billboard.in", "r", stdin);
+    freopen("billboard.out", "w", stdout);
 
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -142,7 +112,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

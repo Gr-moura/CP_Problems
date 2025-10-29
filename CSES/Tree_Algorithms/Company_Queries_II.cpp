@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -38,92 +39,91 @@ typedef vector<int> vi;
 void NO() { cout << "NO" << endl; }
 void YES() { cout << "YES" << endl; }
 
-bool prime(ll a) { if (a == 1) return 0; if (a == 2) return 1; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
+bool prime(ll a) { if (a <= 1) return 0; if (a == 2) return 1; if (a % 2 == 0) return 0; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
 
-const int MOD = 1e9 + 7, MAX = 1e5 + 10;
+int MOD = 1e9 + 7, MAX = 2e5 + 10;
+int MAX2 = 30;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
+int n, q, tempo;
+vector<vi> adj(MAX), anc(MAX2, vi(MAX, 0));
+vi in(MAX), out(MAX);
 
-// DSU em O(a(n))
-struct DSU
+void dfs(int vAtual, int vPai)
 {
-    vector<int> id, sz;
+    in[vAtual] = tempo++;
 
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
+    for (int u : adj[vAtual])
     {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
-}
-
-ll kruskal(int n, vi &regra)
-{
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
+        if (u != vPai)
         {
-            cost |= w;
-            dsu.unite(x, y);
+            anc[0][u] = vAtual;
+            dfs(u, vAtual);
         }
     }
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
+    out[vAtual] = tempo++;
+}
+
+void buildBL()
+{
+    tempo = 0;
+    dfs(0, -1);
+
+    for (int k = 1; k < MAX2; k++)
     {
-        if (dsu.find(i) != conjunto) return -1;
+        for (int i = 0; i < n; i++)
+        {
+            anc[k][i] = anc[k - 1][anc[k - 1][i]];
+        }
+    }
+}
+
+bool isAncestor(int a, int b)
+{
+    if (in[a] <= in[b] and out[a] >= out[b]) return true;
+    return false;
+}
+
+int lca(int a, int b)
+{
+    if (isAncestor(a, b)) return a;
+    if (isAncestor(a, b)) return b;
+
+    for (int k = MAX2 - 1; k >= 0; k--)
+    {
+        if (isAncestor(anc[k][a], b)) continue;
+        a = anc[k][a];
     }
 
-    return cost;
+    return anc[0][a];
 }
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    cin >> n >> q;
 
-    for (int i = 0; i < arestas; i++)
+    for (int i = 1; i < n; i++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        int pai;
+        cin >> pai;
+        pai--;
 
-        edg.emplace_back(c, u, v);
+        adj[i].pb(pai);
+        adj[pai].pb(i);
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
+    buildBL();
 
-    cout << minCost << endl;
+    for (int i = 0; i < q; i++)
+    {
+        int a, b;
+        cin >> a >> b;
+        a--, b--;
+
+        cout << lca(a, b) + 1 << endl;
+    }
 }
 
 int32_t main()
@@ -142,7 +142,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

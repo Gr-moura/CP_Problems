@@ -1,7 +1,7 @@
 /*
 ID: gabriel139
 LANG: C++
-TASK: test
+TASK: palsquare
 */
 
 /* clang-format off */
@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -44,92 +45,55 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
+int b;
+map<int, char> dict = {{0, '0'},  {1, '1'},  {2, '2'},  {3, '3'},  {4, '4'},  {5, '5'},  {6, '6'},
+                       {7, '7'},  {8, '8'},  {9, '9'},  {10, 'A'}, {11, 'B'}, {12, 'C'}, {13, 'D'},
+                       {14, 'E'}, {15, 'F'}, {16, 'G'}, {17, 'H'}, {18, 'I'}, {19, 'J'}, {20, 'K'}};
 
-// DSU em O(a(n))
-struct DSU
+bool isPalindromic(string &s)
 {
-    vector<int> id, sz;
-
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
+    for (int i = 0; i < s.size() / 2; i++)
     {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
+        if (s[i] != s[s.size() - 1 - i]) return false;
     }
 
     return true;
 }
 
-ll kruskal(int n, vi &regra)
+string turnIntoBaseB(int num)
 {
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
+    string s;
+    while (num > 0)
     {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
+        int res = num % b;
+        s += dict[res];
+        num /= b;
     }
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
+    reverse(all(s));
+    return s;
 }
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    cin >> b;
 
-    for (int i = 0; i < arestas; i++)
+    for (int i = 1; i <= 300; i++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        string inicial = turnIntoBaseB(i);
+        string final = turnIntoBaseB(i * i);
 
-        edg.emplace_back(c, u, v);
+        if (isPalindromic(final))
+        {
+            cout << inicial << " " << final << endl;
+        }
     }
-
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
-
-    cout << minCost << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
+    freopen("palsquare.in", "r", stdin);
+    freopen("palsquare.out", "w", stdout);
 
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -142,7 +106,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

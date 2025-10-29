@@ -1,9 +1,3 @@
-/*
-ID: gabriel139
-LANG: C++
-TASK: test
-*/
-
 /* clang-format off */
 #include <bits/stdc++.h>
 using namespace std;
@@ -22,6 +16,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define dbg(x) cout << #x << " = " << x << endl
 #define printv(a) {for(auto u:a) cout<<u<<" "; cout<<endl;}
 #define all(x) x.begin(), x.end()
+#define sz(a) ((int)((a).size()))
 #define int long long
 #define endl '\n'
 #define f first
@@ -44,93 +39,31 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
-
-// DSU em O(a(n))
-struct DSU
-{
-    vector<int> id, sz;
-
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
-}
-
-ll kruskal(int n, vi &regra)
-{
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
-
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
-}
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    int n, s;
+    cin >> n >> s;
 
-    for (int i = 0; i < arestas; i++)
+    vi a(n);
+    for (auto &i : a)
+        cin >> i;
+
+    int l = 0, sum = 0, ans = 0;
+    for (int r = 0; r < n; r++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        sum += a[r];
+        while (l < n && sum >= s)
+            sum -= a[l++];
 
-        edg.emplace_back(c, u, v);
+        ans += l;
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
-
-    cout << minCost << endl;
+    cout << ans << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
-
     // casas decimais
     // cout << fixed << setprecision(1);
 
@@ -142,7 +75,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

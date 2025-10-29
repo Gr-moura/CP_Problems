@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -44,86 +45,68 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
-
-// DSU em O(a(n))
-struct DSU
+int askOriginal(int l, int r)
 {
-    vector<int> id, sz;
+    cout << 1 << " " << l + 1 << " " << r + 1 << endl;
+    cout.flush();
 
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
+    int x;
+    cin >> x;
+    return x;
 }
 
-ll kruskal(int n, vi &regra)
+int askMod(int l, int r)
 {
-    DSU dsu(n);
+    cout << 2 << " " << l + 1 << " " << r + 1 << endl;
+    cout.flush();
 
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
+    int x;
+    cin >> x;
+    return x;
+}
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
+void ans(int l, int r)
+{
+    cout << "! " << l + 1 << " " << r + 1 << endl;
+    cout.flush();
 }
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    int n;
+    cin >> n;
 
-    for (int i = 0; i < arestas; i++)
+    int sumOriginal = n * (n + 1) / 2;
+    int sumMod = askMod(0, n - 1);
+
+    int qtMod = sumMod - sumOriginal;
+
+    int mod = qtMod, og = 0;
+    int l = 0, r = n - 1;
+    while (1)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        int m = (l + r) / 2;
+        mod = askMod(m, r);
+        og = askOriginal(m, r);
 
-        edg.emplace_back(c, u, v);
+        if (mod - og == qtMod and (r - m + 1) == qtMod)
+        {
+            ans(m, r);
+            return;
+        }
+
+        if (mod == og) r = m - 1;
+        else if (mod == og + qtMod) l = m + 1;
+
+        else if (og + qtMod > mod)
+        {
+            r = m + (mod - og - 1);
+            l = m - (qtMod - (mod - og));
+
+            ans(l, r);
+            return;
+        }
     }
-
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
-
-    cout << minCost << endl;
 }
 
 int32_t main()

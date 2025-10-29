@@ -1,7 +1,7 @@
 /*
 ID: gabriel139
 LANG: C++
-TASK: test
+TASK: beads
 */
 
 /* clang-format off */
@@ -44,92 +44,76 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
-
-// DSU em O(a(n))
-struct DSU
+int n;
+string s;
+int testarEsq(int index, char inicialL)
 {
-    vector<int> id, sz;
+    int atual = 0, l = index;
 
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
+    while (l >= 0 and (s[l] == 'w' or s[l] == inicialL))
+        atual++, l--;
 
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
+    return atual;
 }
 
-ll kruskal(int n, vi &regra)
+int testarDir(int index, char inicialR)
 {
-    DSU dsu(n);
+    int atual = 0, r = index + 1;
 
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
+    while (r < 2 * n and (s[r] == 'w' or s[r] == inicialR))
+        atual++, r++;
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
+    return atual;
 }
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    cin >> n;
+    cin >> s;
 
-    for (int i = 0; i < arestas; i++)
+    s += s;
+
+    int ans = 0;
+    // lado esquerdo vira [0, i] e direito vira (i, 2 * n)
+    for (int i = 0; i < 2 * n - 1; i++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        char inicialL = s[i], inicialR = s[i + 1];
 
-        edg.emplace_back(c, u, v);
+        if (inicialL == 'w' and inicialR == 'w')
+        {
+            ans = max(testarEsq(i, 'b') + testarDir(i, 'b'), ans);
+            ans = max(testarEsq(i, 'b') + testarDir(i, 'r'), ans);
+            ans = max(testarEsq(i, 'r') + testarDir(i, 'b'), ans);
+            ans = max(testarEsq(i, 'r') + testarDir(i, 'r'), ans);
+            continue;
+        }
+
+        if (inicialL == 'w')
+        {
+            ans = max(testarEsq(i, 'b') + testarDir(i, inicialR), ans);
+            ans = max(testarEsq(i, 'r') + testarDir(i, inicialR), ans);
+            continue;
+        }
+
+        if (inicialR == 'w')
+        {
+            ans = max(testarEsq(i, inicialL) + testarDir(i, 'b'), ans);
+            ans = max(testarEsq(i, inicialL) + testarDir(i, 'r'), ans);
+            continue;
+        }
+
+        ans = max(testarEsq(i, inicialL) + testarDir(i, inicialR), ans);
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
+    ans = min(ans, n);
 
-    cout << minCost << endl;
+    cout << ans << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
+    freopen("beads.in", "r", stdin);
+    freopen("beads.out", "w", stdout);
 
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -142,7 +126,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

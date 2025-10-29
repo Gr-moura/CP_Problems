@@ -22,6 +22,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define dbg(x) cout << #x << " = " << x << endl
 #define printv(a) {for(auto u:a) cout<<u<<" "; cout<<endl;}
 #define all(x) x.begin(), x.end()
+#define sz(a) ((int)((a).size()))
 #define int long long
 #define endl '\n'
 #define f first
@@ -44,92 +45,56 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
-
-// DSU em O(a(n))
-struct DSU
-{
-    vector<int> id, sz;
-
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
-}
-
-ll kruskal(int n, vi &regra)
-{
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
-
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
-}
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    int n;
+    cin >> n;
 
-    for (int i = 0; i < arestas; i++)
+    vector<pii> pontos;
+    for (int i = 0; i < n; i++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        int a, b;
+        cin >> a >> b;
 
-        edg.emplace_back(c, u, v);
+        pontos.emplace_back(a, b);
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
+    int maxArea = -1;
+    for (int i = 0; i < n; i++)
     {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
+        for (int j = i + 1; j < n; j++)
+        {
+            for (int k = j + 1; k < n; k++)
+            {
+                pii a = pontos[i];
+                pii b = pontos[j];
+                pii c = pontos[k];
+
+                int h, l;
+                if (!(a.f == b.f or a.f == c.f or b.f == c.f)) continue;
+                if (!(a.s == b.s or a.s == c.s or b.s == c.s)) continue;
+
+                if (a.f == b.f) h = abs(a.s - b.s);
+                if (a.f == c.f) h = abs(a.s - c.s);
+                if (c.f == b.f) h = abs(c.s - b.s);
+
+                if (a.s == b.s) l = abs(a.f - b.f);
+                if (a.s == c.s) l = abs(a.f - c.f);
+                if (c.s == b.s) l = abs(c.f - b.f);
+
+                maxArea = max(maxArea, h * l);
+            }
+        }
     }
 
-    cout << minCost << endl;
+    cout << maxArea << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
+    freopen("triangles.in", "r", stdin);
+    freopen("triangles.out", "w", stdout);
 
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -142,7 +107,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

@@ -40,45 +40,6 @@ const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
 
-pair<int, tuple<int, int, int, int>> testar(int n0, int n1, int n2, int n3, vi &v0, vi &v1, vi &v2, vi &v3)
-{
-    // Chuto que o menor está em n0
-    int l1 = 0, l2 = 0, l3 = 0, minDiff = LINF;
-
-    int a = 0, b = 0, c = 0, d = 0;
-    for (int r = 0; r < n0; r++)
-    {
-        int atual = v0[r];
-        int maxAtual = v0[r];
-
-        while (l1 < n1 && v1[l1] < atual)
-            l1++;
-
-        if (l1 >= n1) break;
-        maxAtual = max(maxAtual, v1[l1]);
-
-        while (l2 < n2 && v2[l2] < atual)
-            l2++;
-
-        if (l2 >= n2) break;
-        maxAtual = max(maxAtual, v2[l2]);
-
-        while (l3 < n3 && v3[l3] < atual)
-            l3++;
-
-        if (l3 >= n3) break;
-        maxAtual = max(maxAtual, v3[l3]);
-
-        if (minDiff > maxAtual - atual)
-        {
-            minDiff = maxAtual - atual;
-            a = atual, b = v1[l1], c = v2[l2], d = v3[l3];
-        }
-    }
-
-    return make_pair(minDiff, make_tuple(a, b, c, d));
-}
-
 void solve()
 {
     int nCaps, nShirts, nPants, nShoes;
@@ -87,55 +48,53 @@ void solve()
     vi caps(nCaps);
     for (auto &i : caps)
         cin >> i;
-    sort(all(caps));
 
     cin >> nShirts;
     vi shirts(nShirts);
     for (auto &i : shirts)
         cin >> i;
-    sort(all(shirts));
 
     cin >> nPants;
     vi pants(nPants);
     for (auto &i : pants)
         cin >> i;
-    sort(all(pants));
 
     cin >> nShoes;
     vi shoes(nShoes);
     for (auto &i : shoes)
         cin >> i;
-    sort(all(shoes));
 
-    auto [ans1, t1] = testar(nCaps, nShirts, nPants, nShoes, caps, shirts, pants, shoes);
-    int minAns = ans1;
-    auto [a, b, c, d] = t1;
-
-    auto [ans2, t2] = testar(nShirts, nPants, nShoes, nCaps, shirts, pants, shoes, caps);
-    if (ans2 < minAns)
+    int minDiff = LINF;
+    int a1, a2, a3, a4;
+    for (auto a : caps)
     {
-        minAns = ans2;
-        auto [b1, c1, d1, a1] = t2;
-        a = a1, b = b1, c = c1, d = d1;
+        int menorA = a;
+        int maiorA = a;
+        for (auto b : shirts)
+        {
+            int menorB = min(menorA, b);
+            int maiorB = max(maiorA, b);
+            for (auto c : pants)
+            {
+                int menorC = min(menorB, c);
+                int maiorC = max(maiorB, c);
+                for (auto d : shoes)
+                {
+                    int menor = min(menorC, d);
+                    int maior = max(maiorC, d);
+
+                    if (minDiff > maior - menor)
+                    {
+
+                        minDiff = maior - menor;
+                        a1 = a, a2 = b, a3 = c, a4 = d;
+                    }
+                }
+            }
+        }
     }
 
-    auto [ans3, t3] = testar(nPants, nShoes, nCaps, nShirts, pants, shoes, caps, shirts);
-    if (ans3 < minAns)
-    {
-        minAns = ans3;
-        auto [c1, d1, a1, b1] = t3;
-        a = a1, b = b1, c = c1, d = d1;
-    }
-
-    auto [ans4, t4] = testar(nShoes, nCaps, nShirts, nPants, shoes, caps, shirts, pants);
-    if (ans4 < minAns)
-    {
-        minAns = ans4;
-        auto [d1, a1, b1, c1] = t4;
-        a = a1, b = b1, c = c1, d = d1;
-    }
-
-    cout << a << " " << b << " " << c << " " << d << endl;
+    cout << minDiff << endl;
 }
 
 int32_t main()

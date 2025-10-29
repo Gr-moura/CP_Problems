@@ -1,7 +1,7 @@
 /*
 ID: gabriel139
 LANG: C++
-TASK: test
+TASK: ariprog
 */
 
 /* clang-format off */
@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -40,96 +41,71 @@ void YES() { cout << "YES" << endl; }
 
 bool prime(ll a) { if (a == 1) return 0; if (a == 2) return 1; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
 
-const int MOD = 1e9 + 7, MAX = 1e5 + 10;
+const int MOD = 1e9 + 7, MAX_M = 250 * 250 * 2 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
-
-// DSU em O(a(n))
-struct DSU
+int pos[MAX_M];
+int n, m;
+struct Cmp
 {
-    vector<int> id, sz;
-
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
+    bool operator()(const pii &a, const pii &b) const
     {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
+        if (a.second == b.second) return a.first < b.first;
+        return a.second < b.second;
     }
 };
 
-bool valido(int weight, vi &regra)
+void solve()
 {
-    for (int i = 31; i >= 0; i--)
+    cin >> n >> m;
+    for (int i = 0; i <= m; i++)
     {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
-}
-
-ll kruskal(int n, vi &regra)
-{
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
+        for (int j = 0; j <= m; j++)
         {
-            cost |= w;
-            dsu.unite(x, y);
+            pos[i * i + j * j] = 1;
         }
     }
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
+    set<pii, Cmp> ans;
+
+    for (int inicial = 0; inicial <= 2 * m * m; inicial++)
     {
-        if (dsu.find(i) != conjunto) return -1;
+        for (int add = 1; inicial + (n - 1) * add <= 2 * m * m; add++)
+        {
+            int p = 1;
+            for (int i = 0; i < n; i++)
+            {
+                if (!pos[inicial + add * i])
+                {
+                    p = 0;
+                    break;
+                }
+            }
+
+            if (p)
+            {
+                ans.insert({inicial, add});
+            }
+        }
     }
 
-    return cost;
-}
-
-void solve()
-{
-    cin >> vertices >> arestas;
-    edg.clear();
-
-    for (int i = 0; i < arestas; i++)
+    if (ans.size() == 0)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
-
-        edg.emplace_back(c, u, v);
+        cout << "NONE" << endl;
+        return;
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
+    for (auto el : ans)
     {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
+        cout << el.first << " " << el.second << endl;
     }
-
-    cout << minCost << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
+    freopen("ariprog.in", "r", stdin);
+    freopen("ariprog.out", "w", stdout);
 
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -142,7 +118,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

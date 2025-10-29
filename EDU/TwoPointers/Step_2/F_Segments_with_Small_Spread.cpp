@@ -1,9 +1,3 @@
-/*
-ID: gabriel139
-LANG: C++
-TASK: test
-*/
-
 /* clang-format off */
 #include <bits/stdc++.h>
 using namespace std;
@@ -22,6 +16,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define dbg(x) cout << #x << " = " << x << endl
 #define printv(a) {for(auto u:a) cout<<u<<" "; cout<<endl;}
 #define all(x) x.begin(), x.end()
+#define sz(a) ((int)((a).size()))
 #define int long long
 #define endl '\n'
 #define f first
@@ -44,93 +39,87 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
+int n, k;
 
-// DSU em O(a(n))
-struct DSU
+template <class T> struct minqueue
 {
-    vector<int> id, sz;
+    deque<pair<T, int>> q;
 
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
+    void push(T x)
     {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
+        int ct = 1;
+        while (q.size() and x < q.front().first)
+            ct += q.front().second, q.pop_front();
+        q.emplace_front(x, ct);
     }
+    void pop()
+    {
+        if (q.back().second > 1) q.back().second--;
+        else q.pop_back();
+    }
+    T min() { return q.back().first; }
 };
 
-bool valido(int weight, vi &regra)
+template <class T> struct maxqueue
 {
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
+    deque<pair<T, int>> q;
 
-    return true;
+    void push(T x)
+    {
+        int ct = 1;
+        while (q.size() and x > q.front().first)
+            ct += q.front().second, q.pop_front();
+        q.emplace_front(x, ct);
+    }
+    void pop()
+    {
+        if (q.back().second > 1) q.back().second--;
+        else q.pop_back();
+    }
+    T max() { return q.back().first; }
+};
+
+minqueue<int> mnq;
+maxqueue<int> maq;
+
+void add(int x)
+{
+    mnq.push(x), maq.push(x);
 }
 
-ll kruskal(int n, vi &regra)
+bool good()
 {
-    DSU dsu(n);
+    return maq.max() - mnq.min() <= k;
+}
 
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
-
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
+void remove()
+{
+    mnq.pop(), maq.pop();
 }
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    cin >> n >> k;
+    vi a(n);
 
-    for (int i = 0; i < arestas; i++)
+    for (int i = 0; i < n; i++)
+        cin >> a[i];
+
+    int l = 0, ans = 0;
+    for (int r = 0; r < n; r++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        add(a[r]);
+        while (!good())
+            remove(), l++;
 
-        edg.emplace_back(c, u, v);
+        ans += r - l + 1;
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
-
-    cout << minCost << endl;
+    cout << ans << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
-
     // casas decimais
     // cout << fixed << setprecision(1);
 
@@ -142,7 +131,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

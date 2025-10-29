@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -44,88 +45,52 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
+int n = 8;
+int qt = 0;
 
-// DSU em O(a(n))
-struct DSU
+vector<string> b(8);
+vector<string> v(8);
+
+vector<int> rows(n, 0);
+vector<int> cols(n, 0);
+vector<int> posDiag(2 * n, 0);
+vector<int> negDiag(2 * n, 0);
+
+bool valid(int x, int y)
 {
-    vector<int> id, sz;
+    if (b[x][y] == '.' and !cols[y] and !posDiag[x + y + 1] and !negDiag[n - y + x]) return true;
 
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
+    return false;
 }
 
-ll kruskal(int n, vi &regra)
+void solve(int x)
 {
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
+    if (x == n)
     {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
+        qt++;
+        return;
     }
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
+    for (int y = 0; y < n; y++)
     {
-        if (dsu.find(i) != conjunto) return -1;
-    }
+        if (!valid(x, y)) continue;
 
-    return cost;
+        cols[y] = posDiag[x + y + 1] = negDiag[n - y + x] = 1;
+
+        solve(x + 1);
+
+        cols[y] = posDiag[x + y + 1] = negDiag[n - y + x] = 0;
+    }
 }
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    for (int i = 0; i < n; i++)
+        cin >> b[i];
 
-    for (int i = 0; i < arestas; i++)
-    {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
-
-        edg.emplace_back(c, u, v);
-    }
-
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
-
-    cout << minCost << endl;
+    solve(0);
+    cout << qt << endl;
 }
-
 int32_t main()
 {
     // freopen("test.in", "r", stdin);
@@ -142,7 +107,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

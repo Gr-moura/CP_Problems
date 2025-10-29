@@ -1,7 +1,7 @@
 /*
 ID: gabriel139
 LANG: C++
-TASK: test
+TASK: pprime
 */
 
 /* clang-format off */
@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -38,98 +39,58 @@ typedef vector<int> vi;
 void NO() { cout << "NO" << endl; }
 void YES() { cout << "YES" << endl; }
 
-bool prime(ll a) { if (a == 1) return 0; if (a == 2) return 1; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
+bool prime(ll a) { if (a <= 1) return 0; if (a == 2) return 1; if (a % 2 == 0) return 0; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
 
 const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
+string digits[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+set<int> ans;
+int a, b;
 
-// DSU em O(a(n))
-struct DSU
+int toNumber(string x)
 {
-    vector<int> id, sz;
-
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
+    int ret = 0;
+    for (auto c : x)
     {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
+        ret *= 10;
+        ret += c - '0';
     }
 
-    return true;
+    return ret;
 }
 
-ll kruskal(int n, vi &regra)
+void search(string x)
 {
-    DSU dsu(n);
+    if (x.size() > 8) return;
+    int num = toNumber(x);
 
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
+    if (num > b) return;
+    if (num >= a and prime(num)) ans.insert(num);
 
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
+    for (auto c : digits)
+        search(c + x + c);
 }
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    cin >> a >> b;
 
-    for (int i = 0; i < arestas; i++)
+    for (auto c : digits)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
-
-        edg.emplace_back(c, u, v);
+        search(c);
+        search(c + c);
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
-    {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
-
-    cout << minCost << endl;
+    for (auto i : ans)
+        cout << i << endl;
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
+    freopen("pprime.in", "r", stdin);
+    freopen("pprime.out", "w", stdout);
 
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -142,7 +103,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {

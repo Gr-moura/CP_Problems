@@ -27,6 +27,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
@@ -44,92 +45,57 @@ const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
-int vertices, arestas;
-vector<tuple<int, int, int>> edg; // {peso,[x,y]}
-
-// DSU em O(a(n))
-struct DSU
-{
-    vector<int> id, sz;
-
-    DSU(int n) : id(n), sz(n, 1) { iota(id.begin(), id.end(), 0); }
-
-    int find(int a) { return a == id[a] ? a : id[a] = find(id[a]); }
-
-    void unite(int a, int b)
-    {
-        a = find(a), b = find(b);
-        if (a == b) return;
-        if (sz[a] < sz[b]) swap(a, b);
-        sz[a] += sz[b], id[b] = a;
-    }
-};
-
-bool valido(int weight, vi &regra)
-{
-    for (int i = 31; i >= 0; i--)
-    {
-        if (regra[i] == 0 && (weight | (1 << i)) == weight) return false;
-    }
-
-    return true;
-}
-
-ll kruskal(int n, vi &regra)
-{
-    DSU dsu(n);
-
-    ll cost = 0;
-    vector<tuple<int, int, int>> mst;
-    for (auto [w, x, y] : edg)
-    {
-        if (!valido(w, regra)) continue;
-        if (dsu.find(x) != dsu.find(y))
-        {
-            cost |= w;
-            dsu.unite(x, y);
-        }
-    }
-
-    int conjunto = dsu.find(0);
-    for (int i = 1; i < vertices; i++)
-    {
-        if (dsu.find(i) != conjunto) return -1;
-    }
-
-    return cost;
-}
 
 void solve()
 {
-    cin >> vertices >> arestas;
-    edg.clear();
+    int nCows = 8;
+    vector<string> cows = {"Bessie", "Buttercup", "Belinda", "Beatrice", "Bella", "Blue", "Betsy", "Sue"};
+    sort(all(cows));
 
-    for (int i = 0; i < arestas; i++)
+    int n;
+    cin >> n;
+
+    vector<pair<string, string>> regras;
+    for (int i = 0; i < n; i++)
     {
-        int u, v, c;
-        cin >> u >> v >> c;
-        u--, v--;
+        string a, b, s;
+        cin >> a >> s >> s >> s >> s >> b;
 
-        edg.emplace_back(c, u, v);
+        regras.eb(a, b);
     }
 
-    vi regra(32, -1);
-    int minCost = 0;
-    for (int i = 31; i >= 0; i--)
+    do
     {
-        regra[i] = 0;
-        int cost = kruskal(vertices, regra);
-        if (cost == -1) regra[i] = 1, minCost += 1 << i;
-    }
+        int pos = 1;
+        for (auto [c1, c2] : regras)
+        {
+            for (int i = 0; i < nCows; i++)
+            {
+                if (cows[i] != c2) continue;
 
-    cout << minCost << endl;
+                if (i == 0 and cows[i + 1] == c1) continue;
+                else if (i == nCows - 1 and cows[i - 1] == c1) continue;
+                else if (cows[i - 1] == c1 or cows[i + 1] == c1) continue;
+
+                pos = 0;
+                break;
+            }
+
+            if (!pos) break;
+        }
+        if (pos)
+        {
+            for (auto c : cows)
+                cout << c << endl;
+            return;
+        }
+    } while (next_permutation(all(cows)));
 }
 
 int32_t main()
 {
-    // freopen("test.in", "r", stdin);
-    // freopen("test.out", "w", stdout);
+    freopen("lineup.in", "r", stdin);
+    freopen("lineup.out", "w", stdout);
 
     // casas decimais
     // cout << fixed << setprecision(1);
@@ -142,7 +108,7 @@ int32_t main()
     cout.tie(0);
 
     int t = 1;
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
