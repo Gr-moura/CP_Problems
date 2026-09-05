@@ -1,4 +1,6 @@
 /*
+https://cses.fi/problemset/task/1071
+
 ID: gabriel139
 LANG: C++
 TASK: test
@@ -17,36 +19,55 @@ void err(istream_iterator<string> it, T a, Args... args) {
 	err(++it, args...);
 }
 
-#define rep(i, begin, end) for (__typeof(end) i = (begin) - ((begin) > (end)); i != (end) - ((begin) > (end)); i += 1 - 2 * ((begin) > (end)))
-
 #define dbg(x) cout << #x << " = " << x << endl
 #define printv(a) {for(auto u:a) cout<<u<<" "; cout<<endl;}
 #define all(x) x.begin(), x.end()
-#define sz(a) ((int)((a).size()))
 #define int long long
 #define endl '\n'
 #define f first
 #define s second
 #define pb push_back
+#define eb emplace_back
+
+// Índice base 0 do primeiro elemento maior ou igual a x em log n
 #define lb(vect, x) (lower_bound(all(vect), x) - vect.begin())
+
+// Índice base 0 do primeiro elemento  estritamente maior que x em log n
 #define ub(vect, x) (upper_bound(all(vect), x) - vect.begin())
 
 typedef unsigned long long ull;
 typedef long long ll;
 typedef pair<int, int> pii;
 typedef vector<int> vi;
+typedef vector<vi> vvi;
 
 void NO() { cout << "NO" << endl; }
 void YES() { cout << "YES" << endl; }
 
-bool prime(ll a) { if (a == 1) return 0; if (a == 2) return 1; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
+bool prime(ll a) { if (a <= 1) return 0; if (a == 2) return 1; if (a % 2 == 0) return 0; for (int i = 3; i*i <= a; i+=2) if (a % i == 0) return 0; return 1; }
 
 const int MOD = 1e9 + 7, MAX = 1e5 + 10;
 const int INF = 0x3f3f3f3f;
 const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 /* clang-format on */
 
-void solve() {}
+void solve() {
+	int x, y; cin >> x >> y;
+
+	if (x == y) cout << x * x - x + 1 << endl;
+
+	else if (x < y)
+	{
+		if (y % 2 == 0) cout << (y - 1) * (y - 1) + x << endl;
+		else cout << y * y - x + 1 << endl;
+	}
+
+	else
+	{
+		if (x % 2) cout << (x - 1) * (x - 1) + y << endl;
+		else cout << x * x - y + 1 << endl;
+	}
+}
 
 int32_t main()
 {
@@ -61,7 +82,6 @@ int32_t main()
 
     ios_base::sync_with_stdio(0);
     cin.tie(0);
-    cout.tie(0);
 
     int t = 1;
     cin >> t;

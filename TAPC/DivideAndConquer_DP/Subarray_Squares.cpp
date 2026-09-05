@@ -81,7 +81,7 @@ void compute(int etapaAtual, int l, int r, int optLB, int optUB)
 
     for (int k = optLB; k <= min(mid, optUB); ++k)
     {
-        int cost = dp[etapaAtual - 1][k - 1] + Custo(k, mid);
+        int cost = (k ? dp[etapaAtual - 1][k - 1] : 0) + Custo(k, mid);
         if (cost < best.first) best = {cost, k};
     }
 
