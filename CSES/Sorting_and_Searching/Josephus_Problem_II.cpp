@@ -10,6 +10,14 @@ TASK: test
 #include <bits/stdc++.h>
 using namespace std;
 
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+using namespace __gnu_pbds;
+typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> ordered_set;
+typedef tree<int, null_type, less_equal<int>, rb_tree_tag, tree_order_statistics_node_update> multi_ordered_set;
+
+
 #define error(args...) { string _s = #args; replace(_s.begin(), _s.end(), ',', ' '); stringstream _ss(_s); istream_iterator<string> _it(_ss); err(_it, args); }
 
 void err(istream_iterator<string> it) {}
@@ -53,9 +61,21 @@ const ll LINF = 0x3f3f3f3f3f3f3f3fll;
 
 void solve() {
 	int n, k; cin >> n >> k;
-	vi v(n); for (auto &i: v) cin >> i;
+	ordered_set os;
 
-	// Formula => (atual + k + qtVezes que passou por x) % n
+	for (int i = 1; i <= n; i++) os.insert(i);
+	int cAtual = 1, qtAtual = n;
+	for (int i = 0; i < n; i++)
+	{
+		cAtual = (cAtual + k) % qtAtual;
+
+		if (!cAtual) cAtual += qtAtual;
+		cout << *os.find_by_order(cAtual - 1) << " ";
+		os.erase(*os.find_by_order(cAtual - 1));
+		
+		qtAtual--;
+	}
+
 }
 
 int32_t main()
@@ -73,7 +93,6 @@ int32_t main()
     cin.tie(0);
 
     int t = 1;
-    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
